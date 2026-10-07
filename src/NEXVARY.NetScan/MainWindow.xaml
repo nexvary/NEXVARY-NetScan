@@ -230,6 +230,13 @@
                                   RowHeaderWidth="0"
                                   AlternatingRowBackground="#101A22">
                             <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="" Width="54">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ContentControl Style="{StaticResource DeviceIconHostStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="الحالة" Binding="{Binding Status}" Width="110"/>
                                 <DataGridTextColumn Header="النوع" Binding="{Binding DeviceType}" Width="150"/>
                                 <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="120"/>
