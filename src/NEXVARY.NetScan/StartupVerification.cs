@@ -38,11 +38,18 @@ internal static class StartupVerification
         if (grid.ItemContainerGenerator.ContainerFromIndex(0) is not DataGridRow) throw new InvalidOperationException("Device rows did not render.");
         Capture(window, Path.Combine(directory, "devices.png"));
         var history = (TabItem)window.FindName("HistoryTab");
+        var historyGrid = (DataGrid)window.FindName("HistoryGrid");
+        historyGrid.ItemsSource = ((IEnumerable<DeviceInfo>)grid.ItemsSource).Select(d => new DeviceHistoryEntry {
+            Ip = d.Ip, MacAddress = d.MacAddress, HostName = d.HostName, Vendor = d.Vendor, DeviceType = d.DeviceType,
+            IconKind = d.IconKind, DnsServer = d.DnsServer, FirstSeenUtc = DateTimeOffset.UtcNow.AddDays(-1), LastSeenUtc = DateTimeOffset.UtcNow, IsOnline = true
+        }).ToArray();
         history.IsSelected = true;
+        await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         window.UpdateLayout();
         history.ApplyTemplate();
         if (history.Template.FindName("TabBorder", history) is not Border border || border.Background is not SolidColorBrush brush || brush.Color.R > 90)
             throw new InvalidOperationException("Selected tab is not dark.");
+        if (historyGrid.ItemContainerGenerator.ContainerFromIndex(0) is not DataGridRow) throw new InvalidOperationException("History rows did not render.");
         Capture(window, Path.Combine(directory, "history.png"));
         ((TabItem)window.FindName("DevicesTab")).IsSelected = true;
         window.Width = window.MinWidth;

@@ -117,7 +117,7 @@
             </Border>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock Text="NEXVARY NetScan" FontSize="28" FontWeight="Bold"/>
+                <TextBlock Text="NEXVARY NetScan" ToolTip="Version 0.2.7" FontSize="28" FontWeight="Bold"/>
                 <TextBlock Text="اكتشف الأجهزة، الشركة المصنعة، ونشاط الشبكة بدون أوامر" Foreground="{StaticResource MutedBrush}" FontSize="14" Margin="0,5,0,0"/>
             </StackPanel>
 
@@ -190,7 +190,7 @@
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Header="الحالة" Binding="{Binding Status}" Width="82" ElementStyle="{StaticResource CenteredCellText}"/>
                             <DataGridTextColumn Header="نوع الجهاز" Binding="{Binding DeviceType}" Width="125" ElementStyle="{StaticResource CenteredCellText}"/>
-                            <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="120" ElementStyle="{StaticResource CenteredCellText}"/>
+                            <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="150" ElementStyle="{StaticResource CenteredCellText}"/>
                             <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="*" MinWidth="135" ElementStyle="{StaticResource CenteredCellText}"/>
                             <DataGridTextColumn Header="IPv4 DNS Server" Binding="{Binding DnsServer}" Width="155" ElementStyle="{StaticResource NetworkValueText}"/>
                             <DataGridTextColumn Header="MAC Address" Binding="{Binding MacAddress}" Width="160" ElementStyle="{StaticResource NetworkValueText}"/>
@@ -221,7 +221,7 @@
                                 </StackPanel>
                             </Button>
                         </Grid>
-                        <DataGrid Grid.Row="1"
+                        <DataGrid x:Name="HistoryGrid" Grid.Row="1"
                                   ItemsSource="{Binding HistoryView}"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
@@ -247,8 +247,8 @@
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="الحالة" Binding="{Binding Status}" Width="110"/>
                                 <DataGridTextColumn Header="النوع" Binding="{Binding DeviceType}" Width="150"/>
-                                <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="120"/>
-                                <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="*" MinWidth="140" ElementStyle="{StaticResource CenteredCellText}"/>
+                                <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="150"/>
+                                <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="150" ElementStyle="{StaticResource CenteredCellText}"/>
                                 <DataGridTextColumn Header="IPv4 DNS Server" Binding="{Binding DnsServer}" Width="165" ElementStyle="{StaticResource NetworkValueText}"/>
                                 <DataGridTextColumn Header="MAC" Binding="{Binding MacAddress}" Width="170" ElementStyle="{StaticResource NetworkValueText}"/>
                                 <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="135" ElementStyle="{StaticResource NetworkValueText}"/>

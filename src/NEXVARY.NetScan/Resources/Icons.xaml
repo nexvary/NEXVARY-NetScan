@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- App / toolbar -->
-    <DataTemplate x:Key="AppLogoTemplate"><Image Width="48" Height="48" Source="/Assets/AppIcon.ico" FlowDirection="LeftToRight"/></DataTemplate>
+    <DataTemplate x:Key="AppLogoTemplate"><Image Width="48" Height="48" Source="/Assets/AppLogo.png" FlowDirection="LeftToRight"/></DataTemplate>
 
     <DataTemplate x:Key="ScanIconTemplate">
         <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">

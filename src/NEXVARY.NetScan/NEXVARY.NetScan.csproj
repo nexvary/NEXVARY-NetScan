@@ -12,5 +12,5 @@
     <Company>NEXVARY</Company>
     <Product>NEXVARY NetScan</Product>
   </PropertyGroup>
-  <ItemGroup><EmbeddedResource Include="Assets/vendors.tsv" /><Resource Include="Assets/AppIcon.ico" /></ItemGroup>
+  <ItemGroup><EmbeddedResource Include="Assets/vendors.tsv" /><Resource Include="Assets/AppIcon.ico" /><Resource Include="Assets/AppLogo.png" /></ItemGroup>
 </Project>
