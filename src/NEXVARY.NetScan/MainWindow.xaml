@@ -30,6 +30,17 @@
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
+        <Style x:Key="NetworkValueText" TargetType="TextBlock">
+            <Setter Property="FlowDirection" Value="LeftToRight"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
+        <Style x:Key="CenteredCellText" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
         <Style TargetType="DataGridRow">
             <Setter Property="Background" Value="{StaticResource PanelBrush}"/>
             <Setter Property="BorderBrush" Value="#1F303C"/>
@@ -203,6 +214,10 @@
                               Background="{StaticResource PanelBrush}"
                               RowHeaderWidth="0"
                               SelectionMode="Extended"
+                              RowHeight="42"
+                              ColumnHeaderHeight="40"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                               AlternatingRowBackground="#101A22">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="" Width="58">
@@ -212,12 +227,13 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="الحالة" Binding="{Binding Status}" Width="80"/>
-                            <DataGridTextColumn Header="نوع الجهاز" Binding="{Binding DeviceType}" Width="155"/>
-                            <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="125"/>
-                            <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="*"/>
-                            <DataGridTextColumn Header="MAC Address" Binding="{Binding MacAddress}" Width="175"/>
-                            <DataGridTextColumn Header="IP Address" Binding="{Binding Ip}" Width="140"/>
+                            <DataGridTextColumn Header="الحالة" Binding="{Binding Status}" Width="82" ElementStyle="{StaticResource CenteredCellText}"/>
+                            <DataGridTextColumn Header="نوع الجهاز" Binding="{Binding DeviceType}" Width="145" ElementStyle="{StaticResource CenteredCellText}"/>
+                            <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="120" ElementStyle="{StaticResource CenteredCellText}"/>
+                            <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="190" ElementStyle="{StaticResource CenteredCellText}"/>
+                            <DataGridTextColumn Header="IPv4 DNS Server" Binding="{Binding DnsServer}" Width="165" ElementStyle="{StaticResource NetworkValueText}"/>
+                            <DataGridTextColumn Header="MAC Address" Binding="{Binding MacAddress}" Width="175" ElementStyle="{StaticResource NetworkValueText}"/>
+                            <DataGridTextColumn Header="IP Address" Binding="{Binding Ip}" Width="135" ElementStyle="{StaticResource NetworkValueText}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -255,6 +271,10 @@
                                   BorderThickness="0"
                                   Background="{StaticResource PanelBrush}"
                                   RowHeaderWidth="0"
+                                  RowHeight="42"
+                                  ColumnHeaderHeight="40"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                                   AlternatingRowBackground="#101A22">
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn Header="" Width="54">
