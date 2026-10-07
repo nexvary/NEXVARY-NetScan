@@ -13,16 +13,21 @@ namespace NEXVARY.NetScan;
 public partial class MainWindow : Window
 {
     private readonly NetworkScanner _scanner = new();
+    private readonly DeviceHistoryStore _historyStore = new();
     private readonly ObservableCollection<DeviceInfo> _devices = new();
+    private readonly ObservableCollection<DeviceHistoryEntry> _history = new();
     private CancellationTokenSource? _scanCancellation;
 
     public ICollectionView DevicesView { get; }
+    public ICollectionView HistoryView { get; }
 
     public MainWindow()
     {
         InitializeComponent();
         DevicesView = CollectionViewSource.GetDefaultView(_devices);
         DevicesView.Filter = FilterDevice;
+        HistoryView = CollectionViewSource.GetDefaultView(_history);
+        ReloadHistory();
         DataContext = this;
     }
 
@@ -54,6 +59,8 @@ public partial class MainWindow : Window
             var found = await _scanner.ScanAsync(context, progress, _scanCancellation.Token);
             foreach (var device in found)
                 _devices.Add(device);
+
+            RefreshHistory(_historyStore.Merge(found, DateTimeOffset.UtcNow));
 
             DeviceCountText.Text = _devices.Count.ToString();
             StatusText.Text = _devices.Count == 0
@@ -98,6 +105,7 @@ public partial class MainWindow : Window
         return device.Ip.Contains(query, StringComparison.OrdinalIgnoreCase)
             || device.HostName.Contains(query, StringComparison.OrdinalIgnoreCase)
             || device.MacAddress.Contains(query, StringComparison.OrdinalIgnoreCase)
+            || device.Vendor.Contains(query, StringComparison.OrdinalIgnoreCase)
             || device.DeviceType.Contains(query, StringComparison.OrdinalIgnoreCase);
     }
 
@@ -109,9 +117,9 @@ public partial class MainWindow : Window
             return;
 
         var sb = new StringBuilder();
-        sb.AppendLine("IP\tMAC\tاسم الجهاز\tالنوع\tالحالة");
+        sb.AppendLine("IP\tMAC\tالشركة\tاسم الجهاز\tالنوع\tالحالة");
         foreach (var d in source)
-            sb.AppendLine($"{d.Ip}\t{d.MacAddress}\t{d.HostName}\t{d.DeviceType}\t{d.Status}");
+            sb.AppendLine($"{d.Ip}\t{d.MacAddress}\t{d.Vendor}\t{d.HostName}\t{d.DeviceType}\t{d.Status}");
 
         try
         {
@@ -139,12 +147,12 @@ public partial class MainWindow : Window
             return;
 
         var sb = new StringBuilder();
-        sb.AppendLine("IP,MAC,Host Name,Device Type,Status");
+        sb.AppendLine("IP,MAC,Vendor,Host Name,Device Type,Status");
         foreach (var d in _devices)
         {
             sb.AppendLine(string.Join(",", new[]
             {
-                Csv(d.Ip), Csv(d.MacAddress), Csv(d.HostName), Csv(d.DeviceType), Csv(d.Status)
+                Csv(d.Ip), Csv(d.MacAddress), Csv(d.Vendor), Csv(d.HostName), Csv(d.DeviceType), Csv(d.Status)
             }));
         }
 
@@ -152,7 +160,35 @@ public partial class MainWindow : Window
         StatusText.Text = "تم تصدير النتائج بنجاح.";
     }
 
+    private void ClearHistoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        var answer = MessageBox.Show(
+            "هل تريد مسح سجل الأجهزة المحفوظ على هذا الكمبيوتر؟",
+            "مسح سجل الأجهزة",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question);
+
+        if (answer != MessageBoxResult.Yes)
+            return;
+
+        _historyStore.Clear();
+        _history.Clear();
+        StatusText.Text = "تم مسح سجل الأجهزة.";
+    }
+
     private static string Csv(string value) => $"\"{value.Replace("\"", "\"\"")}\"";
+
+    private void ReloadHistory() => RefreshHistory(_historyStore.Load()
+        .OrderByDescending(x => x.IsOnline)
+        .ThenByDescending(x => x.LastSeenUtc));
+
+    private void RefreshHistory(IEnumerable<DeviceHistoryEntry> entries)
+    {
+        _history.Clear();
+        foreach (var entry in entries)
+            _history.Add(entry);
+        HistoryView.Refresh();
+    }
 
     private void SetScanningState(bool scanning)
     {
