@@ -28,12 +28,70 @@ jobs:
       - name: Test
         run: dotnet test tests/NEXVARY.NetScan.Tests/NEXVARY.NetScan.Tests.csproj -c Release
 
-      - name: Publish portable EXE
-        run: dotnet publish src/NEXVARY.NetScan/NEXVARY.NetScan.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/NEXVARY-NetScan
+      - name: Publish self-contained Windows app
+        run: dotnet publish src/NEXVARY.NetScan/NEXVARY.NetScan.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/publish
 
-      - name: Upload Windows artifact
+      - name: Verify published executable
+        shell: pwsh
+        run: |
+          $exe = Join-Path $PWD "artifacts/publish/NEXVARY-NetScan.exe"
+          if (-not (Test-Path $exe)) { throw "Published EXE was not created." }
+          $info = (Get-Item $exe).VersionInfo
+          Write-Host "Published product: $($info.ProductName)"
+          Write-Host "Published version: $($info.ProductVersion)"
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress -y
+
+      - name: Build Windows installer
+        shell: pwsh
+        run: |
+          $iscc = Join-Path ${env:ProgramFiles(x86)} "Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { throw "Inno Setup compiler was not found." }
+          & $iscc "installer\NEXVARY-NetScan.iss"
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup compilation failed with exit code $LASTEXITCODE." }
+
+      - name: Smoke-test installer and uninstaller
+        shell: pwsh
+        run: |
+          $installer = Join-Path $PWD "artifacts/installer/NEXVARY-NetScan-Setup-v0.2.2.exe"
+          if (-not (Test-Path $installer)) { throw "Installer was not created." }
+
+          $testDir = Join-Path $env:TEMP "NEXVARY-NetScan-CI"
+          if (Test-Path $testDir) { Remove-Item $testDir -Recurse -Force }
+
+          $installArgs = @(
+            "/VERYSILENT",
+            "/SUPPRESSMSGBOXES",
+            "/NORESTART",
+            "/SP-",
+            "/DIR=$testDir"
+          )
+          $p = Start-Process -FilePath $installer -ArgumentList $installArgs -PassThru -Wait
+          if ($p.ExitCode -ne 0) { throw "Installer returned exit code $($p.ExitCode)." }
+
+          $installedExe = Join-Path $testDir "NEXVARY-NetScan.exe"
+          if (-not (Test-Path $installedExe)) { throw "Installed executable was not found." }
+
+          $uninstaller = Join-Path $testDir "unins000.exe"
+          if (-not (Test-Path $uninstaller)) { throw "Uninstaller was not created." }
+
+          $u = Start-Process -FilePath $uninstaller -ArgumentList "/VERYSILENT","/SUPPRESSMSGBOXES","/NORESTART" -PassThru -Wait
+          if ($u.ExitCode -ne 0) { throw "Uninstaller returned exit code $($u.ExitCode)." }
+
+          Write-Host "Installer smoke test passed."
+
+      - name: Upload portable Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NEXVARY-NetScan-win-x64
-          path: artifacts/NEXVARY-NetScan/
+          name: NEXVARY-NetScan-portable-win-x64
+          path: artifacts/publish/
+          if-no-files-found: error
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEXVARY-NetScan-Setup-v0.2.2
+          path: artifacts/installer/NEXVARY-NetScan-Setup-v0.2.2.exe
           if-no-files-found: error
