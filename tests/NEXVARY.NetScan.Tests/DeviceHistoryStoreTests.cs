@@ -1,3 +1,4 @@
+using System.IO;
 using System.Net;
 using NEXVARY.NetScan.Models;
 using NEXVARY.NetScan.Services;
