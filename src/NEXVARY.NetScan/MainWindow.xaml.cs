@@ -65,7 +65,8 @@ public partial class MainWindow : Window
             LocalIpText.Text = context.LocalAddress.ToString();
             GatewayText.Text = context.Gateway?.ToString() ?? "غير معروف";
             NetworkText.Text = context.NetworkLabel;
-            StatusText.Text = $"جاري فحص {context.NetworkLabel} عبر {context.AdapterName}…";
+            string dnsDisplay = NetworkScanner.FormatDnsServers(context.DnsServers);
+            StatusText.Text = $"جاري فحص {context.NetworkLabel} عبر {context.AdapterName} — DNS: {dnsDisplay}";
 
             var progress = new Progress<(int Done, int Total)>(p =>
             {
@@ -83,9 +84,9 @@ public partial class MainWindow : Window
             DeviceCountText.Text = _devices.Count.ToString();
             StatusText.Text = _devices.Count switch
             {
-                0 => $"اكتمل الفحص على {context.AdapterName} ولكن لم تظهر أجهزة. تحقق من اتصال الشبكة.",
-                1 => $"تم العثور على جهاز واحد عبر {context.AdapterName}.",
-                _ => $"تم العثور على {_devices.Count} أجهزة عبر {context.AdapterName}."
+                0 => $"اكتمل الفحص على {context.AdapterName} — DNS: {dnsDisplay} — لم تظهر أجهزة.",
+                1 => $"تم العثور على جهاز واحد عبر {context.AdapterName} — DNS: {dnsDisplay}.",
+                _ => $"تم العثور على {_devices.Count} أجهزة عبر {context.AdapterName} — DNS: {dnsDisplay}."
             };
             ScanProgress.Value = 100;
         }
@@ -146,9 +147,9 @@ public partial class MainWindow : Window
             return;
 
         var sb = new StringBuilder();
-        sb.AppendLine("IP\tMAC\tالشركة\tاسم الجهاز\tالنوع\tالحالة");
+        sb.AppendLine("IP\tMAC\tIPv4 DNS\tالشركة\tاسم الجهاز\tالنوع\tالحالة");
         foreach (var d in source)
-            sb.AppendLine($"{d.Ip}\t{d.MacAddress}\t{d.Vendor}\t{d.HostName}\t{d.DeviceType}\t{d.Status}");
+            sb.AppendLine($"{d.Ip}\t{d.MacAddress}\t{d.DnsServer}\t{d.Vendor}\t{d.HostName}\t{d.DeviceType}\t{d.Status}");
 
         try
         {
@@ -176,12 +177,12 @@ public partial class MainWindow : Window
             return;
 
         var sb = new StringBuilder();
-        sb.AppendLine("IP,MAC,Vendor,Host Name,Device Type,Status");
+        sb.AppendLine("IP,MAC,IPv4 DNS,Vendor,Host Name,Device Type,Status");
         foreach (var d in _devices)
         {
             sb.AppendLine(string.Join(",", new[]
             {
-                Csv(d.Ip), Csv(d.MacAddress), Csv(d.Vendor), Csv(d.HostName), Csv(d.DeviceType), Csv(d.Status)
+                Csv(d.Ip), Csv(d.MacAddress), Csv(d.DnsServer), Csv(d.Vendor), Csv(d.HostName), Csv(d.DeviceType), Csv(d.Status)
             }));
         }
 
