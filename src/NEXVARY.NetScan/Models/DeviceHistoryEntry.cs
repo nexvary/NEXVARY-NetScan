@@ -10,6 +10,7 @@ public sealed class DeviceHistoryEntry
     public string HostName { get; set; } = string.Empty;
     public string Vendor { get; set; } = string.Empty;
     public string DeviceType { get; set; } = string.Empty;
+    public string IconKind { get; set; } = "Generic";
     public DateTimeOffset FirstSeenUtc { get; set; }
     public DateTimeOffset LastSeenUtc { get; set; }
     public bool IsOnline { get; set; }
