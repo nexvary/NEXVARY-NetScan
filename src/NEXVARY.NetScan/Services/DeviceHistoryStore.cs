@@ -31,7 +31,7 @@ public sealed class DeviceHistoryStore
 
             string json = File.ReadAllText(_filePath);
             return JsonSerializer.Deserialize<List<DeviceHistoryEntry>>(json, JsonOptions)
-                ?? Array.Empty<DeviceHistoryEntry>();
+                ?? new List<DeviceHistoryEntry>();
         }
         catch
         {
