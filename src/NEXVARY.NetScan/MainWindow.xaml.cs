@@ -23,10 +23,13 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
-        InitializeComponent();
+        // Create views before InitializeComponent because XAML events such as
+        // TextChanged can fire while the visual tree is still being built.
         DevicesView = CollectionViewSource.GetDefaultView(_devices);
         DevicesView.Filter = FilterDevice;
         HistoryView = CollectionViewSource.GetDefaultView(_history);
+
+        InitializeComponent();
         ReloadHistory();
         DataContext = this;
     }
@@ -90,7 +93,10 @@ public partial class MainWindow : Window
 
     private void SearchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
     {
-        DevicesView.Refresh();
+        // During early XAML initialization the event may fire before the
+        // window is fully loaded. The view is initialized first, but keep
+        // this guard to make startup resilient to future UI changes.
+        DevicesView?.Refresh();
     }
 
     private bool FilterDevice(object item)
