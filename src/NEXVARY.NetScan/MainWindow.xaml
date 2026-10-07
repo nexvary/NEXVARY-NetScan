@@ -37,12 +37,12 @@
             <Setter Property="FlowDirection" Value="LeftToRight"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/><Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}"/>
         </Style>
         <Style x:Key="CenteredCellText" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/><Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}"/>
         </Style>
         <Style TargetType="DataGridRow">
             <Setter Property="Background" Value="{StaticResource PanelBrush}"/>
@@ -121,33 +121,31 @@
                 <TextBlock Text="اكتشف الأجهزة، الشركة المصنعة، ونشاط الشبكة بدون أوامر" Foreground="{StaticResource MutedBrush}" FontSize="14" Margin="0,5,0,0"/>
             </StackPanel>
 
-            <WrapPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,12,0,0" FlowDirection="RightToLeft">
-                <Button x:Name="ExportButton" Click="ExportButton_Click" IsEnabled="False">
+            <WrapPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,12,0,0" FlowDirection="RightToLeft"><Button x:Name="ScanButton" Click="ScanButton_Click" Background="#126B67" BorderBrush="#2AA79F" FontWeight="Bold" Padding="22,10">
                     <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                        <TextBlock Text="تصدير CSV" VerticalAlignment="Center"/>
-                        <ContentControl ContentTemplate="{StaticResource CsvIconTemplate}" Margin="8,0,0,0"/>
+                        <TextBlock Text="اكتشاف الأجهزة" VerticalAlignment="Center"/>
+                        <ContentControl ContentTemplate="{StaticResource ScanIconTemplate}" Margin="8,0,0,0"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="CopyButton" Click="CopyButton_Click" IsEnabled="False">
-                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                        <TextBlock Text="نسخ النتائج" VerticalAlignment="Center"/>
-                        <ContentControl ContentTemplate="{StaticResource CopyIconTemplate}" Margin="8,0,0,0"/>
-                    </StackPanel>
-                </Button>
-                <Button x:Name="RefreshButton" Click="RefreshButton_Click" ToolTip="إعادة التحقق من الأجهزة المعروفة دون فحص كل عناوين الشبكة"><StackPanel Orientation="Horizontal"><ContentControl ContentTemplate="{StaticResource RefreshIconTemplate}" Margin="0,0,8,0"/><TextBlock Text="تحديث الحالة" VerticalAlignment="Center"/></StackPanel></Button>
+<Button x:Name="RefreshButton" Click="RefreshButton_Click" ToolTip="إعادة التحقق من الأجهزة المعروفة دون فحص كل عناوين الشبكة"><StackPanel Orientation="Horizontal"><ContentControl ContentTemplate="{StaticResource RefreshIconTemplate}" Margin="0,0,8,0"/><TextBlock Text="تحديث الحالة" VerticalAlignment="Center"/></StackPanel></Button>
 <Button x:Name="StopButton" Click="StopButton_Click" IsEnabled="False" Background="#392228" BorderBrush="#66323C">
                     <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                         <TextBlock Text="إيقاف" VerticalAlignment="Center"/>
                         <ContentControl ContentTemplate="{StaticResource StopIconTemplate}" Margin="8,0,0,0"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="ScanButton" Click="ScanButton_Click" Background="#126B67" BorderBrush="#2AA79F" FontWeight="Bold" Padding="22,10">
+<Button x:Name="CopyButton" Click="CopyButton_Click" IsEnabled="False">
                     <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                        <TextBlock Text="اكتشاف الأجهزة" VerticalAlignment="Center"/>
-                        <ContentControl ContentTemplate="{StaticResource ScanIconTemplate}" Margin="8,0,0,0"/>
+                        <TextBlock Text="نسخ النتائج" VerticalAlignment="Center"/>
+                        <ContentControl ContentTemplate="{StaticResource CopyIconTemplate}" Margin="8,0,0,0"/>
                     </StackPanel>
                 </Button>
-            </WrapPanel>
+<Button x:Name="ExportButton" Click="ExportButton_Click" IsEnabled="False">
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                        <TextBlock Text="تصدير CSV" VerticalAlignment="Center"/>
+                        <ContentControl ContentTemplate="{StaticResource CsvIconTemplate}" Margin="8,0,0,0"/>
+                    </StackPanel>
+                </Button></WrapPanel>
         </Grid>
 
 <UniformGrid Grid.Row="1" Columns="4" Margin="-4,0,-4,8"><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="الأجهزة المكتشفة" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="DeviceCountText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource ConnectedDevicesIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="IPv4 المحلي" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="LocalIpText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource ComputerIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Default Gateway" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="GatewayText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource GatewayIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Subnet" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="NetworkText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource SubnetIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="IPv4 DNS Server — هذا الكمبيوتر" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="DnsText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource DnsIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="كارت الشبكة" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="AdapterText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource NetworkDeviceIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="نوع الاتصال" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="ConnectionText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource NetworkDeviceIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="سرعة رابط الشبكة" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="SpeedText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource OnlineIconTemplate}" Margin="8,0,0,0"/></Grid></Border></UniformGrid>
@@ -250,11 +248,12 @@
                                 <DataGridTextColumn Header="الحالة" Binding="{Binding Status}" Width="110"/>
                                 <DataGridTextColumn Header="النوع" Binding="{Binding DeviceType}" Width="150"/>
                                 <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="120"/>
-                                <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="*"/>
-                                <DataGridTextColumn Header="MAC" Binding="{Binding MacAddress}" Width="170"/>
-                                <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="135"/>
-                                <DataGridTextColumn Header="أول ظهور" Binding="{Binding FirstSeen}" Width="145"/>
-                                <DataGridTextColumn Header="آخر ظهور" Binding="{Binding LastSeen}" Width="145"/>
+                                <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="*" MinWidth="140" ElementStyle="{StaticResource CenteredCellText}"/>
+                                <DataGridTextColumn Header="IPv4 DNS Server" Binding="{Binding DnsServer}" Width="165" ElementStyle="{StaticResource NetworkValueText}"/>
+                                <DataGridTextColumn Header="MAC" Binding="{Binding MacAddress}" Width="170" ElementStyle="{StaticResource NetworkValueText}"/>
+                                <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="135" ElementStyle="{StaticResource NetworkValueText}"/>
+                                <DataGridTextColumn Header="أول ظهور" Binding="{Binding FirstSeen}" Width="145" ElementStyle="{StaticResource NetworkValueText}"/>
+                                <DataGridTextColumn Header="آخر ظهور" Binding="{Binding LastSeen}" Width="145" ElementStyle="{StaticResource NetworkValueText}"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>
@@ -268,7 +267,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0">
-                <TextBlock x:Name="StatusText" Text="جاهز للفحص" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                <TextBlock x:Name="StatusText" Text="جاهز للفحص" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
                 <ProgressBar x:Name="ScanProgress" Height="5" Margin="0,7,0,0" Minimum="0" Maximum="100" Value="0" Background="#1C2933" Foreground="{StaticResource AccentBrush}"/>
             </StackPanel>
             <TextBlock Grid.Column="1" Text="بيانات MAC والسجل تبقى محليًا على جهازك" Foreground="#718492" FontSize="12" VerticalAlignment="Center" Margin="16,0,0,0"/>

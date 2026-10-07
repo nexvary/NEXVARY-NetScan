@@ -16,6 +16,8 @@ internal static class StartupVerification
         Directory.CreateDirectory(directory);
         if (!window.IsVisible || new System.Windows.Interop.WindowInteropHelper(window).Handle == IntPtr.Zero)
             throw new InvalidOperationException("MainWindow is not visible.");
+        foreach (var item in new[] { ("DeviceCountText", "3"), ("LocalIpText", "192.168.1.20"), ("GatewayText", "192.168.1.1"), ("NetworkText", "192.168.1.0/24"), ("DnsText", "192.168.1.1 / 8.8.8.8"), ("AdapterText", "Intel Ethernet — UI verification"), ("ConnectionText", "Ethernet"), ("SpeedText", "1000 Mbps"), ("StatusText", "بيانات اختبار واجهة — ليست نتيجة فحص شبكة فعلية") })
+            ((TextBlock)window.FindName(item.Item1)).Text = item.Item2;
         var grid = (DataGrid)window.FindName("DevicesGrid");
         grid.ItemsSource = new[] {
             new DeviceInfo { IpAddress = IPAddress.Parse("192.168.1.1"), HostName = "router-demo", MacAddress = "4C:5E:0C:11:22:33", Vendor = "MikroTik", DeviceType = "راوتر / بوابة", IconKind = "Router", IsGateway = true },
