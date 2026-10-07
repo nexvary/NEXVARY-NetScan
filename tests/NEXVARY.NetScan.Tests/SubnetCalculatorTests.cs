@@ -1,5 +1,6 @@
 using System.Net;
 using NEXVARY.NetScan.Services;
+using Xunit;
 
 namespace NEXVARY.NetScan.Tests;
 
