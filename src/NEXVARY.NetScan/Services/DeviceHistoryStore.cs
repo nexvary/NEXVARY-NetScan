@@ -61,6 +61,7 @@ public sealed class DeviceHistoryStore
 
             entry.Ip = device.Ip;
             entry.MacAddress = device.MacAddress;
+            entry.DnsServer = device.DnsServer;
             entry.HostName = device.HostName;
             entry.Vendor = device.Vendor;
             entry.DeviceType = device.DeviceType;
