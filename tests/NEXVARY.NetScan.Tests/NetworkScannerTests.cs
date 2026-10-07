@@ -20,4 +20,36 @@ public sealed class NetworkScannerTests
                 IPAddress.Parse(local),
                 IPAddress.Parse(mask)));
     }
+
+    [Fact]
+    public void IsUsableHostAddress_RejectsNetworkAndBroadcast()
+    {
+        var local = IPAddress.Parse("192.168.1.107");
+        var mask = IPAddress.Parse("255.255.255.0");
+
+        Assert.False(NetworkScanner.IsUsableHostAddress(IPAddress.Parse("192.168.1.0"), local, mask));
+        Assert.False(NetworkScanner.IsUsableHostAddress(IPAddress.Parse("192.168.1.255"), local, mask));
+        Assert.True(NetworkScanner.IsUsableHostAddress(IPAddress.Parse("192.168.1.1"), local, mask));
+        Assert.True(NetworkScanner.IsUsableHostAddress(IPAddress.Parse("192.168.1.102"), local, mask));
+    }
+
+    [Fact]
+    public void FormatDnsServers_ShowsOnlyIpv4AndRemovesDuplicates()
+    {
+        var value = NetworkScanner.FormatDnsServers(new[]
+        {
+            IPAddress.Parse("192.168.1.1"),
+            IPAddress.Parse("8.8.8.8"),
+            IPAddress.Parse("192.168.1.1"),
+            IPAddress.Parse("2001:4860:4860::8888")
+        });
+
+        Assert.Equal("192.168.1.1 / 8.8.8.8", value);
+    }
+
+    [Fact]
+    public void FormatDnsServers_ReturnsArabicFallbackWhenEmpty()
+    {
+        Assert.Equal("غير متاح", NetworkScanner.FormatDnsServers(Array.Empty<IPAddress>()));
+    }
 }
