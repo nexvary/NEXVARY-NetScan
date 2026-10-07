@@ -27,12 +27,12 @@
         <Style TargetType="DataGridCell">
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridCell"><Border Background="{TemplateBinding Background}" Padding="4"><ContentPresenter VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter>
-            <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#20505A"/><Setter Property="Foreground" Value="#FFFFFF"/></Trigger></Style.Triggers>
+            
             <Setter Property="Padding" Value="10,8"/>
             <Setter Property="BorderBrush" Value="#1F303C"/>
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
+<Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#20505A"/><Setter Property="Foreground" Value="#FFFFFF"/></Trigger></Style.Triggers>        </Style>
         <Style x:Key="NetworkValueText" TargetType="TextBlock">
             <Setter Property="FlowDirection" Value="LeftToRight"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
