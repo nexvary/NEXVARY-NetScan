@@ -26,6 +26,6 @@ public sealed class VendorResolverTests
     [Fact]
     public void Resolve_ReturnsUnknownForUnsupportedOui()
     {
-        Assert.Equal("غير معروف", VendorResolver.Resolve("00:11:22:33:44:55"));
+        Assert.Equal("غير معروف", VendorResolver.Resolve("FC:FF:FF:33:44:55"));
     }
 }

@@ -26,7 +26,7 @@ jobs:
         run: dotnet build src/NEXVARY.NetScan/NEXVARY.NetScan.csproj -c Release --no-restore
 
       - name: Test
-        run: dotnet test tests/NEXVARY.NetScan.Tests/NEXVARY.NetScan.Tests.csproj -c Release
+        run: dotnet test tests/NEXVARY.NetScan.Tests/NEXVARY.NetScan.Tests.csproj -c Release --logger "trx;LogFileName=tests.trx" --results-directory artifacts/tests
 
       - name: Publish self-contained Windows app
         run: dotnet publish src/NEXVARY.NetScan/NEXVARY.NetScan.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/publish
@@ -55,7 +55,7 @@ jobs:
       - name: Smoke-test installer and uninstaller
         shell: pwsh
         run: |
-          $installer = Join-Path $PWD "artifacts/installer/NEXVARY-NetScan-Setup-v0.2.6.exe"
+          $installer = Join-Path $PWD "artifacts/installer/NEXVARY-NetScan-Setup-v0.2.7.exe"
           if (-not (Test-Path $installer)) { throw "Installer was not created." }
 
           $testDir = Join-Path $env:TEMP "NEXVARY-NetScan-CI"
@@ -74,20 +74,23 @@ jobs:
           $installedExe = Join-Path $testDir "NEXVARY-NetScan.exe"
           if (-not (Test-Path $installedExe)) { throw "Installed executable was not found." }
 
-          # Launch the installed application and verify it remains alive.
-          $app = Start-Process -FilePath $installedExe -WorkingDirectory $testDir -PassThru
-          Start-Sleep -Seconds 5
-          if ($app.HasExited) {
-            $logPath = Join-Path $env:LOCALAPPDATA "NEXVARY\NetScan\startup.log"
-            if (Test-Path $logPath) {
-              Write-Host "----- startup.log -----"
-              Get-Content $logPath
-              Write-Host "-----------------------"
-            }
-            throw "Installed application exited during startup with code $($app.ExitCode)."
+          # The installed binary itself verifies XAML, real rows, icons and its dispatcher.
+          $proof = Join-Path $PWD "artifacts/ui-proof"
+          $app = Start-Process -FilePath $installedExe -ArgumentList "--verify-startup",$proof -PassThru
+          if (-not $app.WaitForExit(45000)) { Stop-Process -Id $app.Id -Force; throw "Startup verification timed out (possible modal dialog)." }
+          if ($app.ExitCode -ne 0 -or -not (Test-Path "$proof/startup-ok.txt")) { throw "Installed MainWindow verification failed." }
+          # Also exercise the ordinary auto-scan startup; a live error dialog does not pass.
+          $app = Start-Process -FilePath $installedExe -PassThru
+          Start-Sleep -Seconds 8
+          $app.Refresh()
+          if ($app.HasExited -or $app.MainWindowHandle -eq 0 -or $app.MainWindowTitle -ne "NEXVARY NetScan") { throw "Normal startup did not open MainWindow." }
+          Add-Type -AssemblyName UIAutomationClient
+          $root = [System.Windows.Automation.AutomationElement]::RootElement
+          $condition = [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ProcessIdProperty, $app.Id)
+          $windows = $root.FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+          foreach ($win in $windows) {
+            if ($win.Current.ClassName -eq "#32770") { Stop-Process -Id $app.Id -Force; throw "Application opened a modal error dialog." }
           }
-
-          Write-Host "Installed application remained alive after startup."
           Stop-Process -Id $app.Id -Force
           Start-Sleep -Seconds 1
 
@@ -97,7 +100,23 @@ jobs:
           $u = Start-Process -FilePath $uninstaller -ArgumentList "/VERYSILENT","/SUPPRESSMSGBOXES","/NORESTART" -PassThru -Wait
           if ($u.ExitCode -ne 0) { throw "Uninstaller returned exit code $($u.ExitCode)." }
 
+          if (Test-Path $installedExe) { throw "Uninstall left the installed EXE behind." }
           Write-Host "Installer smoke test passed."
+
+      - name: Hash deliverables
+        shell: pwsh
+        run: |
+          Get-FileHash artifacts/publish/NEXVARY-NetScan.exe,artifacts/installer/*.exe -Algorithm SHA256 | ForEach-Object { "$($_.Hash)  $([IO.Path]::GetFileName($_.Path))" } | Set-Content artifacts/SHA256SUMS.txt
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NetScan-verification
+          path: |
+            artifacts/ui-proof/
+            artifacts/tests/
+            artifacts/SHA256SUMS.txt
 
       - name: Upload portable Windows artifact
         uses: actions/upload-artifact@v4
@@ -109,6 +128,6 @@ jobs:
       - name: Upload Windows installer
         uses: actions/upload-artifact@v4
         with:
-          name: NEXVARY-NetScan-Setup-v0.2.6
-          path: artifacts/installer/NEXVARY-NetScan-Setup-v0.2.6.exe
+          name: NEXVARY-NetScan-Setup-v0.2.7
+          path: artifacts/installer/NEXVARY-NetScan-Setup-v0.2.7.exe
           if-no-files-found: error

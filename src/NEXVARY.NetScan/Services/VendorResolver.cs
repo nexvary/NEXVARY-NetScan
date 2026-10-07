@@ -99,6 +99,22 @@ public static class VendorResolver
             ["98F112"] = "Hikvision"
         };
 
+    private static readonly IReadOnlyDictionary<string, string> Registry = LoadRegistry();
+
+    private static IReadOnlyDictionary<string, string> LoadRegistry()
+    {
+        using var stream = typeof(VendorResolver).Assembly.GetManifestResourceStream("NEXVARY.NetScan.Assets.vendors.tsv")
+            ?? throw new InvalidOperationException("Missing IEEE vendor registry.");
+        using var reader = new System.IO.StreamReader(stream);
+        var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        while (reader.ReadLine() is { } line)
+        {
+            var parts = line.Split('\t', 2);
+            if (parts.Length == 2) values[parts[0]] = parts[1];
+        }
+        return values;
+    }
+
     public static string Resolve(string? macAddress)
     {
         if (!TryNormalize(macAddress, out string normalized))
@@ -108,7 +124,13 @@ public static class VendorResolver
             return "MAC خاص/عشوائي";
 
         string oui = normalized[..6];
-        return Vendors.TryGetValue(oui, out string? vendor) ? vendor : "غير معروف";
+        if (!Registry.TryGetValue(oui, out var registered)) return "غير معروف";
+        if (Vendors.TryGetValue(oui, out var alias) && registered.Contains(alias.Replace("-", ""), StringComparison.OrdinalIgnoreCase)) return alias;
+        string compact = registered.Replace("-", "").Replace(" ", "");
+        foreach (var brand in new[] { "MikroTik", "TP-Link", "Huawei", "ZTE", "Cisco", "Ubiquiti", "Tenda", "D-Link", "Mercusys", "Xiaomi", "OPPO", "realme", "Samsung", "Apple", "Honor", "Hikvision", "Dahua", "Uniview", "Imou", "Ezviz", "Tuya", "Intel", "Dell", "Lenovo", "ASUS", "Acer", "Epson", "Canon", "Brother" })
+            if (compact.Contains(brand.Replace("-", ""), StringComparison.OrdinalIgnoreCase)) return brand;
+        if (registered.Contains("Hewlett", StringComparison.OrdinalIgnoreCase)) return "HP";
+        return registered;
     }
 
     public static bool IsLocallyAdministered(string? macAddress)
@@ -127,6 +149,6 @@ public static class VendorResolver
             return false;
 
         normalized = new string(macAddress.Where(Uri.IsHexDigit).ToArray()).ToUpperInvariant();
-        return normalized.Length >= 12;
+        return NetworkScanner.NormalizeMac(macAddress) is not null;
     }
 }

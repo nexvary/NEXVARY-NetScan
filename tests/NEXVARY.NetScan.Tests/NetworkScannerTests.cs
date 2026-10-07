@@ -52,4 +52,17 @@ public sealed class NetworkScannerTests
     {
         Assert.Equal("غير متاح", NetworkScanner.FormatDnsServers(Array.Empty<IPAddress>()));
     }
+    [Theory]
+    [InlineData("00:00:00:00:00:00")]
+    [InlineData("FF:FF:FF:FF:FF:FF")]
+    [InlineData("01:00:5E:00:00:01")]
+    [InlineData("4C:5E:0C:11:22:33:44")]
+    [InlineData("invalid")]
+    public void InvalidOrMulticastMacIsRejected(string mac) => Assert.Null(NetworkScanner.NormalizeMac(mac));
+
+    [Fact]
+    public void PrivateMacRemainsValid() => Assert.Equal("02:11:22:33:44:55", NetworkScanner.NormalizeMac("02-11-22-33-44-55"));
+
+    [Fact]
+    public void MulticastIpRejected() => Assert.False(NetworkScanner.IsUsableHostAddress(IPAddress.Parse("224.0.0.1"), IPAddress.Parse("192.168.1.1"), IPAddress.Parse("0.0.0.0")));
 }

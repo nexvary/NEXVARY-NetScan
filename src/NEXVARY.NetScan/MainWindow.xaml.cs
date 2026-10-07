@@ -33,6 +33,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         ReloadHistory();
         DataContext = this;
+        Closed += (_, _) => _scanCancellation?.Cancel();
     }
 
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -48,13 +49,16 @@ public partial class MainWindow : Window
         await RunScanAsync();
     }
 
-    private async Task RunScanAsync()
+    private async void RefreshButton_Click(object sender, RoutedEventArgs e) => await RunScanAsync(true);
+
+    private async Task RunScanAsync(bool refresh = false)
     {
         if (_scanCancellation is not null)
             return;
 
         _scanCancellation = new CancellationTokenSource();
         SetScanningState(true);
+        var previousAddresses = _devices.Select(d => d.IpAddress).ToArray();
         _devices.Clear();
         DeviceCountText.Text = "0";
         ScanProgress.Value = 0;
@@ -63,6 +67,10 @@ public partial class MainWindow : Window
         {
             var context = _scanner.GetActiveNetwork();
             LocalIpText.Text = context.LocalAddress.ToString();
+            DnsText.Text = NetworkScanner.FormatDnsServers(context.DnsServers);
+            AdapterText.Text = context.AdapterName;
+            ConnectionText.Text = context.ConnectionType;
+            SpeedText.Text = context.LinkSpeed > 0 ? $"{context.LinkSpeed / 1_000_000d:0.#} Mbps" : "غير متاح";
             GatewayText.Text = context.Gateway?.ToString() ?? "غير معروف";
             NetworkText.Text = context.NetworkLabel;
             string dnsDisplay = NetworkScanner.FormatDnsServers(context.DnsServers);
@@ -71,10 +79,10 @@ public partial class MainWindow : Window
             var progress = new Progress<(int Done, int Total)>(p =>
             {
                 ScanProgress.Value = p.Total == 0 ? 0 : p.Done * 100d / p.Total;
-                StatusText.Text = $"جاري اكتشاف الأجهزة… {p.Done} من {p.Total}";
+                StatusText.Text = p.Done == p.Total ? "جاري تأكيد الأجهزة وحل عناوين MAC…" : $"جاري اكتشاف الأجهزة… {p.Done} من {p.Total}";
             });
 
-            var found = await _scanner.ScanAsync(context, progress, _scanCancellation.Token);
+            var found = await _scanner.ScanAsync(context, progress, _scanCancellation.Token, refresh && previousAddresses.Length > 0 ? previousAddresses : null);
             foreach (var device in found)
                 _devices.Add(device);
 
@@ -88,6 +96,9 @@ public partial class MainWindow : Window
                 1 => $"تم العثور على جهاز واحد عبر {context.AdapterName} — DNS: {dnsDisplay}.",
                 _ => $"تم العثور على {_devices.Count} أجهزة عبر {context.AdapterName} — DNS: {dnsDisplay}."
             };
+            if (SubnetCalculator.GetHostAddresses(context.LocalAddress, context.SubnetMask).Count == 254 &&
+                !context.SubnetMask.Equals(System.Net.IPAddress.Parse("255.255.255.0")))
+                StatusText.Text += " الفحص النشط محدود بنطاق /24 المحلي؛ الذاكرة تشمل الشبكة المحلية.";
             ScanProgress.Value = 100;
         }
         catch (OperationCanceledException)
@@ -201,14 +212,19 @@ public partial class MainWindow : Window
         if (answer != MessageBoxResult.Yes)
             return;
 
-        _historyStore.Clear();
-        _history.Clear();
-        StatusText.Text = "تم مسح سجل الأجهزة.";
+        try
+        {
+            _historyStore.Clear();
+            _history.Clear();
+            StatusText.Text = "تم مسح سجل الأجهزة.";
+        }
+        catch (IOException) { StatusText.Text = "تعذر مسح السجل: الملف قيد الاستخدام. حاول مرة أخرى."; }
+        catch (UnauthorizedAccessException) { StatusText.Text = "تعذر مسح السجل: لا توجد صلاحية للكتابة."; }
     }
 
-    private static string Csv(string value) => $"\"{value.Replace("\"", "\"\"")}\"";
+    private static string Csv(string value) => $"\"{((value.Length > 0 && "=+-@\t\r\n".Contains(value[0])) ? "'" + value : value).Replace("\"", "\"\"")}\"";
 
-    private void ReloadHistory() => RefreshHistory(_historyStore.Load()
+    private void ReloadHistory() => RefreshHistory(_historyStore.Load().Select(e => { e.IsOnline = false; return e; })
         .OrderByDescending(x => x.IsOnline)
         .ThenByDescending(x => x.LastSeenUtc));
 
@@ -223,6 +239,7 @@ public partial class MainWindow : Window
     private void SetScanningState(bool scanning)
     {
         ScanButton.IsEnabled = !scanning;
+        RefreshButton.IsEnabled = !scanning;
         StopButton.IsEnabled = scanning;
         SearchBox.IsEnabled = !scanning;
         if (scanning)

@@ -42,11 +42,11 @@ public sealed class DeviceHistoryStore
 
     public IReadOnlyList<DeviceHistoryEntry> Merge(IEnumerable<DeviceInfo> discovered, DateTimeOffset now)
     {
-        var entries = Load().ToDictionary(x => x.Key, StringComparer.OrdinalIgnoreCase);
+        var entries = Load().GroupBy(x => x.Key, StringComparer.OrdinalIgnoreCase).ToDictionary(x => x.Key, x => x.OrderByDescending(e => e.LastSeenUtc).First(), StringComparer.OrdinalIgnoreCase);
         foreach (var entry in entries.Values)
             entry.IsOnline = false;
 
-        foreach (var device in discovered)
+        foreach (var device in discovered.Where(d => d.Status == "متصل"))
         {
             string key = BuildKey(device);
             if (!entries.TryGetValue(key, out var entry))
@@ -81,15 +81,7 @@ public sealed class DeviceHistoryStore
 
     public void Clear()
     {
-        try
-        {
-            if (File.Exists(_filePath))
-                File.Delete(_filePath);
-        }
-        catch
-        {
-            // The UI remains usable even if Windows temporarily locks the file.
-        }
+        if (File.Exists(_filePath)) File.Delete(_filePath);
     }
 
     private void Save(IReadOnlyList<DeviceHistoryEntry> entries)

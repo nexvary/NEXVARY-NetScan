@@ -26,4 +26,9 @@ public sealed class DeviceClassifierTests
         var result = DeviceClassifier.Classify("android-123", "Xiaomi", false, false);
         Assert.Equal("هاتف / جهاز محمول", result.DeviceType);
     }
+    [Theory]
+    [InlineData("Samsung")]
+    [InlineData("Huawei")]
+    [InlineData("Xiaomi")]
+    public void ManufacturerAloneDoesNotProveDeviceType(string vendor) => Assert.Equal("Generic", DeviceClassifier.Classify("unknown", vendor, false, false).IconKind);
 }

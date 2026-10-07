@@ -14,7 +14,9 @@ public partial class App : Application
 
     private static readonly string CrashLogPath = Path.Combine(LogDirectory, "startup.log");
 
-    protected override void OnStartup(StartupEventArgs e)
+    private bool _verification;
+
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
@@ -24,15 +26,21 @@ public partial class App : Application
         try
         {
             WriteLog("Application startup begin.");
-            var window = new MainWindow();
+            _verification = e.Args.Length == 2 && e.Args[0] == "--verify-startup";
+            var window = new MainWindow { AutoScanOnLoad = !_verification };
             MainWindow = window;
             window.Show();
             WriteLog("Main window shown successfully.");
+            if (_verification)
+            {
+                await StartupVerification.RunAsync(window, e.Args[1]);
+                Shutdown(0);
+            }
         }
         catch (Exception ex)
         {
             WriteLog("Fatal startup exception.", ex);
-            ShowStartupFailure(ex);
+            if (!_verification) ShowStartupFailure(ex);
             Shutdown(1);
         }
     }
@@ -40,6 +48,7 @@ public partial class App : Application
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         WriteLog("Unhandled UI exception.", e.Exception);
+        if (_verification) { e.Handled = true; Shutdown(2); return; }
         MessageBox.Show(
             $"حدث خطأ غير متوقع داخل NEXVARY NetScan.\n\n{e.Exception.Message}\n\nتم حفظ سجل الخطأ في:\n{CrashLogPath}",
             "NEXVARY NetScan",

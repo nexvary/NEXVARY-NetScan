@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="NEXVARY NetScan"
         Loaded="MainWindow_Loaded"
-        Width="1220" Height="760" MinWidth="920" MinHeight="600"
+        Width="1280" Height="820" MinWidth="960" MinHeight="720"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BgBrush}"
         Foreground="{StaticResource TextBrush}"
@@ -25,6 +25,9 @@
             <Setter Property="FontSize" Value="13"/>
         </Style>
         <Style TargetType="DataGridCell">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridCell"><Border Background="{TemplateBinding Background}" Padding="4"><ContentPresenter VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter>
+            <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#20505A"/><Setter Property="Foreground" Value="#FFFFFF"/></Trigger></Style.Triggers>
             <Setter Property="Padding" Value="10,8"/>
             <Setter Property="BorderBrush" Value="#1F303C"/>
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
@@ -101,7 +104,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,18">
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+<Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -117,7 +121,7 @@
                 <TextBlock Text="اكتشف الأجهزة، الشركة المصنعة، ونشاط الشبكة بدون أوامر" Foreground="{StaticResource MutedBrush}" FontSize="14" Margin="0,5,0,0"/>
             </StackPanel>
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" FlowDirection="LeftToRight">
+            <WrapPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,12,0,0" FlowDirection="RightToLeft">
                 <Button x:Name="ExportButton" Click="ExportButton_Click" IsEnabled="False">
                     <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                         <TextBlock Text="تصدير CSV" VerticalAlignment="Center"/>
@@ -130,7 +134,8 @@
                         <ContentControl ContentTemplate="{StaticResource CopyIconTemplate}" Margin="8,0,0,0"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="StopButton" Click="StopButton_Click" IsEnabled="False" Background="#392228" BorderBrush="#66323C">
+                <Button x:Name="RefreshButton" Click="RefreshButton_Click" ToolTip="إعادة التحقق من الأجهزة المعروفة دون فحص كل عناوين الشبكة"><StackPanel Orientation="Horizontal"><ContentControl ContentTemplate="{StaticResource RefreshIconTemplate}" Margin="0,0,8,0"/><TextBlock Text="تحديث الحالة" VerticalAlignment="Center"/></StackPanel></Button>
+<Button x:Name="StopButton" Click="StopButton_Click" IsEnabled="False" Background="#392228" BorderBrush="#66323C">
                     <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                         <TextBlock Text="إيقاف" VerticalAlignment="Center"/>
                         <ContentControl ContentTemplate="{StaticResource StopIconTemplate}" Margin="8,0,0,0"/>
@@ -142,52 +147,10 @@
                         <ContentControl ContentTemplate="{StaticResource ScanIconTemplate}" Margin="8,0,0,0"/>
                     </StackPanel>
                 </Button>
-            </StackPanel>
+            </WrapPanel>
         </Grid>
 
-        <UniformGrid Grid.Row="1" Columns="4" Margin="-5,0,-5,16">
-            <Border Style="{StaticResource CardBorder}" Margin="5">
-                <Grid>
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="الأجهزة المتصلة الآن" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                        <TextBlock x:Name="DeviceCountText" Text="0" FontSize="25" FontWeight="Bold" Margin="0,5,0,0"/>
-                    </StackPanel>
-                    <ContentControl Grid.Column="1" ContentTemplate="{StaticResource ConnectedDevicesIconTemplate}" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                </Grid>
-            </Border>
-            <Border Style="{StaticResource CardBorder}" Margin="5">
-                <Grid>
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="الشبكة" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                        <TextBlock x:Name="NetworkText" Text="—" FontSize="19" FontWeight="SemiBold" Margin="0,7,0,0" FlowDirection="LeftToRight"/>
-                    </StackPanel>
-                    <ContentControl Grid.Column="1" ContentTemplate="{StaticResource SubnetIconTemplate}" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                </Grid>
-            </Border>
-            <Border Style="{StaticResource CardBorder}" Margin="5">
-                <Grid>
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="الراوتر / البوابة" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                        <TextBlock x:Name="GatewayText" Text="—" FontSize="19" FontWeight="SemiBold" Margin="0,7,0,0" FlowDirection="LeftToRight"/>
-                    </StackPanel>
-                    <ContentControl Grid.Column="1" ContentTemplate="{StaticResource RouterIconTemplate}" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                </Grid>
-            </Border>
-            <Border Style="{StaticResource CardBorder}" Margin="5">
-                <Grid>
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="عنوان هذا الكمبيوتر" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                        <TextBlock x:Name="LocalIpText" Text="—" FontSize="19" FontWeight="SemiBold" Margin="0,7,0,0" FlowDirection="LeftToRight"/>
-                    </StackPanel>
-                    <ContentControl Grid.Column="1" ContentTemplate="{StaticResource ComputerIconTemplate}" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                </Grid>
-            </Border>
-        </UniformGrid>
-
+<UniformGrid Grid.Row="1" Columns="4" Margin="-4,0,-4,8"><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="الأجهزة المكتشفة" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="DeviceCountText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource ConnectedDevicesIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="IPv4 المحلي" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="LocalIpText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource ComputerIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Default Gateway" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="GatewayText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource GatewayIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Subnet" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="NetworkText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource SubnetIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="IPv4 DNS Server — هذا الكمبيوتر" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="DnsText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource DnsIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="كارت الشبكة" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="AdapterText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource NetworkDeviceIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="نوع الاتصال" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="ConnectionText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource NetworkDeviceIconTemplate}" Margin="8,0,0,0"/></Grid></Border><Border Style="{StaticResource CardBorder}" Padding="12" Margin="4"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="سرعة رابط الشبكة" Foreground="{StaticResource MutedBrush}" FontSize="12"/><TextBlock x:Name="SpeedText" Text="—" FontSize="16" FontWeight="SemiBold" Margin="0,6,0,0" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><ContentControl Grid.Column="1" ContentTemplate="{StaticResource OnlineIconTemplate}" Margin="8,0,0,0"/></Grid></Border></UniformGrid>
         <Grid Grid.Row="2" Margin="0,0,0,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -195,7 +158,7 @@
             </Grid.ColumnDefinitions>
             <TextBox x:Name="SearchBox" Grid.Column="0" Height="42" VerticalContentAlignment="Center"
                      ToolTip="ابحث باسم الجهاز أو الشركة أو IP أو MAC" TextChanged="SearchBox_TextChanged"/>
-            <TextBlock Grid.Column="1" Text="بحث" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" Margin="12,0,0,0"/>
+            <TextBlock Grid.Column="1" Text="بحث بالاسم أو IP أو MAC" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" Margin="12,0,0,0"/>
         </Grid>
 
         <Border Grid.Row="3" Style="{StaticResource CardBorder}" Padding="0" ClipToBounds="True">
@@ -214,7 +177,7 @@
                               Background="{StaticResource PanelBrush}"
                               RowHeaderWidth="0"
                               SelectionMode="Extended"
-                              RowHeight="42"
+                              RowHeight="48"
                               ColumnHeaderHeight="40"
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
                               ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -228,11 +191,11 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Header="الحالة" Binding="{Binding Status}" Width="82" ElementStyle="{StaticResource CenteredCellText}"/>
-                            <DataGridTextColumn Header="نوع الجهاز" Binding="{Binding DeviceType}" Width="145" ElementStyle="{StaticResource CenteredCellText}"/>
+                            <DataGridTextColumn Header="نوع الجهاز" Binding="{Binding DeviceType}" Width="125" ElementStyle="{StaticResource CenteredCellText}"/>
                             <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="120" ElementStyle="{StaticResource CenteredCellText}"/>
-                            <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="190" ElementStyle="{StaticResource CenteredCellText}"/>
-                            <DataGridTextColumn Header="IPv4 DNS Server" Binding="{Binding DnsServer}" Width="165" ElementStyle="{StaticResource NetworkValueText}"/>
-                            <DataGridTextColumn Header="MAC Address" Binding="{Binding MacAddress}" Width="175" ElementStyle="{StaticResource NetworkValueText}"/>
+                            <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="*" MinWidth="135" ElementStyle="{StaticResource CenteredCellText}"/>
+                            <DataGridTextColumn Header="IPv4 DNS Server" Binding="{Binding DnsServer}" Width="155" ElementStyle="{StaticResource NetworkValueText}"/>
+                            <DataGridTextColumn Header="MAC Address" Binding="{Binding MacAddress}" Width="160" ElementStyle="{StaticResource NetworkValueText}"/>
                             <DataGridTextColumn Header="IP Address" Binding="{Binding Ip}" Width="135" ElementStyle="{StaticResource NetworkValueText}"/>
                         </DataGrid.Columns>
                     </DataGrid>
@@ -250,7 +213,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="الأجهزة التي ظهرت على هذه الشبكة" FontWeight="SemiBold" FontSize="14"/>
+                                <TextBlock Text="الأجهزة التي ظهرت في الفحوص السابقة" FontWeight="SemiBold" FontSize="14"/>
                                 <TextBlock Text="يحفظ أول ظهور وآخر ظهور محليًا على هذا الكمبيوتر فقط." Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="0,3,0,0"/>
                             </StackPanel>
                             <Button Grid.Column="1" Click="ClearHistoryButton_Click" Background="#392228" BorderBrush="#66323C" Padding="14,8">
@@ -271,7 +234,7 @@
                                   BorderThickness="0"
                                   Background="{StaticResource PanelBrush}"
                                   RowHeaderWidth="0"
-                                  RowHeight="42"
+                                  RowHeight="48"
                                   ColumnHeaderHeight="40"
                                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto"

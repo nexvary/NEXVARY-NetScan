@@ -28,7 +28,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ScanIconTemplate">
-        <Viewbox Width="22" Height="22">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="24" Height="24">
                 <Ellipse Canvas.Left="3" Canvas.Top="3" Width="13" Height="13" Stroke="#73E7FF" StrokeThickness="2.4"/>
                 <Line X1="14" Y1="14" X2="21" Y2="21" Stroke="#28C9E8" StrokeThickness="2.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
@@ -38,7 +38,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="StopIconTemplate">
-        <Viewbox Width="20" Height="20">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="24" Height="24">
                 <Rectangle Canvas.Left="4" Canvas.Top="4" Width="16" Height="16" RadiusX="4" RadiusY="4" Fill="#FF5B6E" Stroke="#FF9AA6" StrokeThickness="1.4"/>
                 <Rectangle Canvas.Left="8" Canvas.Top="8" Width="8" Height="8" RadiusX="1.5" RadiusY="1.5" Fill="#FFF0F2"/>
@@ -47,7 +47,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="CopyIconTemplate">
-        <Viewbox Width="20" Height="20">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="24" Height="24">
                 <Rectangle Canvas.Left="7" Canvas.Top="4" Width="11" Height="14" RadiusX="2" RadiusY="2" Fill="#2F78D8" Stroke="#8FC5FF" StrokeThickness="1.3"/>
                 <Rectangle Canvas.Left="4" Canvas.Top="7" Width="11" Height="14" RadiusX="2" RadiusY="2" Fill="#173A66" Stroke="#6DB3FF" StrokeThickness="1.3"/>
@@ -58,7 +58,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="CsvIconTemplate">
-        <Viewbox Width="20" Height="20">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="24" Height="24">
                 <Path Data="M5,2 H15 L20,7 V22 H5 Z" Fill="#145A74" Stroke="#5DDBFF" StrokeThickness="1.3"/>
                 <Path Data="M15,2 V7 H20" Fill="Transparent" Stroke="#B8F3FF" StrokeThickness="1.2"/>
@@ -69,7 +69,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="TrashIconTemplate">
-        <Viewbox Width="18" Height="18">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="24" Height="24">
                 <Path Data="M7,8 H18 L17,21 H8 Z" Fill="#A53543" Stroke="#FF8B98" StrokeThickness="1.2"/>
                 <Rectangle Canvas.Left="6" Canvas.Top="5" Width="13" Height="3" RadiusX="1.3" RadiusY="1.3" Fill="#FF7182"/>
@@ -82,7 +82,7 @@
 
     <!-- Summary card icons -->
     <DataTemplate x:Key="ConnectedDevicesIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Ellipse Canvas.Left="15" Canvas.Top="5" Width="10" Height="10" Fill="#48A7FF"/>
                 <Ellipse Canvas.Left="5" Canvas.Top="12" Width="9" Height="9" Fill="#5ED0FF"/>
@@ -95,7 +95,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="SubnetIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Line X1="20" Y1="11" X2="9" Y2="27" Stroke="#4EF58A" StrokeThickness="2.4"/>
                 <Line X1="20" Y1="11" X2="31" Y2="27" Stroke="#4EF58A" StrokeThickness="2.4"/>
@@ -109,7 +109,7 @@
 
     <!-- Device icons -->
     <DataTemplate x:Key="RouterIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Line X1="9" Y1="16" X2="9" Y2="5" Stroke="#AAB7C4" StrokeThickness="2.2" StrokeStartLineCap="Round"/>
                 <Line X1="31" Y1="16" X2="31" Y2="5" Stroke="#AAB7C4" StrokeThickness="2.2" StrokeStartLineCap="Round"/>
@@ -132,7 +132,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="NetworkDeviceIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Ellipse Canvas.Left="9" Canvas.Top="8" Width="22" Height="22" Fill="#E8EEF4" Stroke="#AAB8C4" StrokeThickness="1.1"/>
                 <Ellipse Canvas.Left="13" Canvas.Top="12" Width="14" Height="14" Fill="#C9D5DF" Stroke="#78A5D1" StrokeThickness="1"/>
@@ -144,7 +144,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="PhoneIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Rectangle Canvas.Left="11" Canvas.Top="3" Width="18" Height="34" RadiusX="4" RadiusY="4" Fill="#101820" Stroke="#A8B8C8" StrokeThickness="1.2"/>
                 <Rectangle Canvas.Left="13" Canvas.Top="6" Width="14" Height="25" RadiusX="2" RadiusY="2">
@@ -162,7 +162,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="CameraIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Path Data="M7,12 L30,8 L34,18 L11,23 Z" Fill="#E7EDF3" Stroke="#9DAAB6" StrokeThickness="1.1"/>
                 <Ellipse Canvas.Left="25" Canvas.Top="10" Width="9" Height="9" Fill="#18324C" Stroke="#55C8FF" StrokeThickness="1.6"/>
@@ -174,7 +174,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ComputerIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Rectangle Canvas.Left="3" Canvas.Top="6" Width="25" Height="20" RadiusX="2.5" RadiusY="2.5" Fill="#162B42" Stroke="#6E9AC4" StrokeThickness="1.2"/>
                 <Rectangle Canvas.Left="5" Canvas.Top="8" Width="21" Height="16" RadiusX="1.5" RadiusY="1.5">
@@ -194,7 +194,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="PrinterIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Rectangle Canvas.Left="10" Canvas.Top="3" Width="20" Height="11" RadiusX="2" RadiusY="2" Fill="#F1F4F7" Stroke="#A9B3BC" StrokeThickness="1"/>
                 <Rectangle Canvas.Left="5" Canvas.Top="13" Width="30" Height="16" RadiusX="4" RadiusY="4" Fill="#455766" Stroke="#8FA0AE" StrokeThickness="1.1"/>
@@ -207,7 +207,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="TvIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Rectangle Canvas.Left="4" Canvas.Top="7" Width="32" Height="23" RadiusX="3" RadiusY="3" Fill="#111D2A" Stroke="#72859B" StrokeThickness="1.2"/>
                 <Rectangle Canvas.Left="7" Canvas.Top="10" Width="26" Height="17" RadiusX="2" RadiusY="2">
@@ -225,7 +225,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="IotIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Ellipse Canvas.Left="10" Canvas.Top="4" Width="20" Height="20" Fill="#FFD04D" Stroke="#FFF1A8" StrokeThickness="1.1"/>
                 <Path Data="M15,19 C17,23 17,26 17,28 H23 C23,26 23,23 25,19" Fill="#E9A832"/>
@@ -238,7 +238,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="GenericDeviceIconTemplate">
-        <Viewbox Width="38" Height="38">
+        <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">
             <Canvas Width="40" Height="40">
                 <Rectangle Canvas.Left="7" Canvas.Top="7" Width="26" Height="26" RadiusX="6" RadiusY="6" Fill="#283846" Stroke="#718493" StrokeThickness="1.2"/>
                 <Rectangle Canvas.Left="11" Canvas.Top="11" Width="18" Height="11" RadiusX="2" RadiusY="2" Fill="#17242F"/>
@@ -249,6 +249,25 @@
         </Viewbox>
     </DataTemplate>
 
+<DataTemplate x:Key="RefreshIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M6,12 A10,10 0 1 1 5,23 M5,5 V13 H13" Stroke="#68D7B0" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="SearchIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M23,23 L32,32 M26,16 A10,10 0 1 1 6,16 A10,10 0 1 1 26,16" Stroke="#69CFFF" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="SettingsIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M13,5 L23,5 24,10 29,13 34,12 37,21 32,24 31,29 32,33 23,37 20,32 15,31 10,32 6,23 11,20 12,15 Z M25,20 A5,5 0 1 1 15,20 A5,5 0 1 1 25,20" Stroke="#ABB8D7" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="DnsIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M7,6 H33 V16 H7 Z M7,23 H33 V33 H7 Z M12,11 H14 M12,28 H14 M20,11 H28 M20,28 H28 M20,16 V23" Stroke="#AD98FF" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="GatewayIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M5,10 H16 V30 H5 Z M24,10 H35 V30 H24 Z M12,20 H29 M24,15 L29,20 24,25" Stroke="#64D8D4" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="LaptopIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M8,7 H32 V27 H8 Z M8,27 L3,33 H37 L32,27 M16,30 H24" Stroke="#7DAEFF" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="AndroidIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M11,14 A9,9 0 0 1 29,14 Z M11,18 H29 V30 H11 Z M8,18 V28 M32,18 V28 M15,30 V35 M25,30 V35 M13,6 L10,2 M27,6 L30,2" Stroke="#85D7A0" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="IphoneIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M13,3 H27 Q30,3 30,6 V34 Q30,37 27,37 H13 Q10,37 10,34 V6 Q10,3 13,3 M16,7 H24 M17,33 H23" Stroke="#BDACFA" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="TabletIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M8,3 H32 V37 H8 Z M12,7 H28 V30 H12 Z M18,34 H22" Stroke="#84C2F1" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="AccessPointIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M8,20 A12,12 0 1 1 32,20 A12,12 0 1 1 8,20 M14,20 A6,6 0 1 1 26,20 A6,6 0 1 1 14,20 M18,20 H22" Stroke="#6EDBCD" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="SwitchIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M3,13 H37 V29 H3 Z M8,19 H12 V23 H8 Z M17,19 H21 V23 H17 Z M26,19 H30 V23 H26 Z" Stroke="#75B8EB" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="MikroTikIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M4,17 H36 V31 H4 Z M8,24 H12 M17,24 H21 M26,24 H30 M10,13 Q20,3 30,13 M15,14 Q20,9 25,14" Stroke="#EF9595" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="NvrIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M4,10 H36 V31 H4 Z M8,16 H26 V22 H8 Z M8,27 H20 M29,26 H32" Stroke="#99A9E2" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="SmartHomeIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M3,19 L20,4 37,19 M8,16 V35 H32 V16 M16,35 V25 H24 V35 M15,17 Q20,12 25,17" Stroke="#EBC178" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="OnlineIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M5,20 A15,15 0 1 1 35,20 A15,15 0 1 1 5,20 M12,20 L18,26 28,14" Stroke="#6DE0A6" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="OfflineIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M5,20 A15,15 0 1 1 35,20 A15,15 0 1 1 5,20 M13,20 H27" Stroke="#96A4B8" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="HistoryIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M7,12 A15,15 0 1 1 5,24 M5,5 V13 H13 M20,10 V21 L27,25" Stroke="#E4B974" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="WarningIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M20,4 L37,34 H3 Z M20,14 V24 M20,28 V30" Stroke="#F5C46C" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
+<DataTemplate x:Key="InformationIconTemplate"><Viewbox Width="32" Height="32" FlowDirection="LeftToRight"><Canvas Width="40" Height="40"><Path Data="M5,20 A15,15 0 1 1 35,20 A15,15 0 1 1 5,20 M20,18 V29 M20,10 V13" Stroke="#78C7FA" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="#182A3A"/></Canvas></Viewbox></DataTemplate>
     <Style x:Key="DeviceIconHostStyle" TargetType="ContentControl">
         <Setter Property="ContentTemplate" Value="{StaticResource GenericDeviceIconTemplate}"/>
         <Style.Triggers>

@@ -6,7 +6,7 @@ public static class DeviceClassifier
 {
     public static DevicePresentation Classify(string hostName, string vendor, bool isGateway, bool isLocalComputer)
     {
-        string text = $"{hostName} {vendor}".ToLowerInvariant();
+        string text = hostName.ToLowerInvariant();
 
         if (isGateway)
             return new("راوتر / بوابة", "Router");

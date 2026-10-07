@@ -15,7 +15,9 @@ public sealed record NetworkContext(
     IPAddress SubnetMask,
     IPAddress? Gateway,
     IReadOnlyList<IPAddress> DnsServers,
-    string NetworkLabel);
+    string NetworkLabel,
+    string ConnectionType = "غير متاح",
+    long LinkSpeed = 0);
 
 public sealed class NetworkScanner
 {
@@ -51,15 +53,19 @@ public sealed class NetworkScanner
             selected.Unicast.IPv4Mask!,
             selected.Gateway,
             selected.DnsServers,
-            SubnetCalculator.Describe(selected.Unicast.Address, selected.Unicast.IPv4Mask!));
+            SubnetCalculator.Describe(selected.Unicast.Address, selected.Unicast.IPv4Mask!),
+            selected.Interface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ? "Wi-Fi" :
+                AdapterRank(selected.Interface.NetworkInterfaceType) == 0 ? "Ethernet" : selected.Interface.NetworkInterfaceType.ToString(),
+            selected.Interface.Speed);
     }
 
     public async Task<IReadOnlyList<DeviceInfo>> ScanAsync(
         NetworkContext context,
         IProgress<(int Done, int Total)>? progress,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        IReadOnlyList<IPAddress>? refreshAddresses = null)
     {
-        var addresses = SubnetCalculator.GetHostAddresses(context.LocalAddress, context.SubnetMask);
+        var addresses = refreshAddresses ?? SubnetCalculator.GetHostAddresses(context.LocalAddress, context.SubnetMask);
         var discovered = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         discovered[context.LocalAddress.ToString()] = GetLocalMacForIp(context.LocalAddress) ?? string.Empty;
@@ -70,7 +76,7 @@ public sealed class NetworkScanner
             discovered.TryAdd(context.Gateway.ToString(), string.Empty);
         }
 
-        var gate = new SemaphoreSlim(MaxParallelism, MaxParallelism);
+        using var gate = new SemaphoreSlim(MaxParallelism, MaxParallelism);
         int completed = 0;
 
         // Active LAN sweep: ICMP wakes responsive devices and SendARP directly asks
@@ -82,7 +88,7 @@ public sealed class NetworkScanner
             try
             {
                 bool pingOk = await TryPingAsync(ip, cancellationToken).ConfigureAwait(false);
-                string? mac = TryGetMacAddress(ip);
+                string? mac = await Task.Run(() => TryGetMacAddress(ip, context.LocalAddress), cancellationToken).ConfigureAwait(false);
 
                 if (pingOk || mac is not null)
                 {
@@ -112,6 +118,22 @@ public sealed class NetworkScanner
         // APIs do not return them in the same scan cycle.
         MergeNeighbors(discovered, ReadWindowsNeighborTable(context.InterfaceIndex), context);
 
+        // Cache entries are candidates, not evidence that a device is online now.
+        var confirmed = new ConcurrentDictionary<string, bool>();
+        await Parallel.ForEachAsync(discovered.Keys, new ParallelOptions { MaxDegreeOfParallelism = 32, CancellationToken = cancellationToken }, async (key, token) =>
+        {
+            var ip = IPAddress.Parse(key);
+            bool active = ip.Equals(context.LocalAddress) || await TryPingAsync(ip, token).ConfigureAwait(false);
+            string? mac = await Task.Run(() => TryGetMacAddress(ip, context.LocalAddress), token).ConfigureAwait(false);
+            if (mac is null && NormalizeMac(discovered[key]) is null)
+            {
+                await Task.Delay(120, token).ConfigureAwait(false);
+                mac = await Task.Run(() => TryGetMacAddress(ip, context.LocalAddress), token).ConfigureAwait(false);
+            }
+            if (mac is not null) discovered[key] = mac;
+            confirmed[key] = active || mac is not null;
+        }).ConfigureAwait(false);
+        MergeNeighbors(discovered, ReadArpTable(context.InterfaceIndex), context);
         string dnsDisplay = FormatDnsServers(context.DnsServers);
 
         var deviceTasks = discovered
@@ -129,15 +151,16 @@ public sealed class NetworkScanner
                 string? mac = NormalizeMac(pair.Value);
                 if (mac is null)
                 {
-                    mac = isLocal ? GetLocalMacForIp(ip) : TryGetMacAddress(ip);
+                    mac = isLocal ? GetLocalMacForIp(ip) : await Task.Run(() => TryGetMacAddress(ip, context.LocalAddress), cancellationToken).ConfigureAwait(false);
                 }
 
                 return await BuildDeviceAsync(
                         ip,
                         mac,
-                        dnsDisplay,
+                        isLocal ? dnsDisplay : "غير متاح",
                         isLocal,
                         isGateway,
+                        confirmed.GetValueOrDefault(pair.Key),
                         cancellationToken)
                     .ConfigureAwait(false);
             });
@@ -271,6 +294,7 @@ public sealed class NetworkScanner
         string dnsServer,
         bool isLocal,
         bool isGateway,
+        bool confirmed,
         CancellationToken token)
     {
         string hostName = await TryResolveHostNameAsync(ip, token).ConfigureAwait(false);
@@ -287,7 +311,7 @@ public sealed class NetworkScanner
             Vendor = vendor,
             DeviceType = presentation.DeviceType,
             IconKind = presentation.IconKind,
-            Status = "متصل",
+            Status = confirmed ? "متصل" : "غير مؤكد",
             IsGateway = isGateway,
             IsLocalComputer = isLocal
         };
@@ -334,7 +358,7 @@ public sealed class NetworkScanner
 
                 if (row.InterfaceIndex != (uint)interfaceIndex)
                     continue;
-                if (row.PhysicalAddress is null || row.PhysicalAddressLength < 6)
+                if (row.PhysicalAddress is null || row.PhysicalAddressLength != 6 || row.Type == 2)
                     continue;
 
                 var address = new IPAddress(BitConverter.GetBytes(row.Address));
@@ -380,13 +404,16 @@ public sealed class NetworkScanner
             if (process is null)
                 return result;
 
-            string output = process.StandardOutput.ReadToEnd();
+            var outputTask = process.StandardOutput.ReadToEndAsync();
+            var errorTask = process.StandardError.ReadToEndAsync();
             if (!process.WaitForExit(2500))
             {
                 try { process.Kill(true); } catch { }
                 return result;
             }
 
+            string output = outputTask.GetAwaiter().GetResult();
+            _ = errorTask.GetAwaiter().GetResult();
             foreach (string rawLine in output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 string line = rawLine.Trim();
@@ -480,7 +507,7 @@ public sealed class NetworkScanner
         return null;
     }
 
-    private static string? TryGetMacAddress(IPAddress ip)
+    private static string? TryGetMacAddress(IPAddress ip, IPAddress? source = null)
     {
         if (ip.AddressFamily != AddressFamily.InterNetwork)
             return null;
@@ -490,7 +517,7 @@ public sealed class NetworkScanner
             byte[] mac = new byte[8];
             int length = mac.Length;
             uint destination = BitConverter.ToUInt32(ip.GetAddressBytes(), 0);
-            uint result = SendARP(destination, 0, mac, ref length);
+            uint result = SendARP(destination, source is null ? 0 : BitConverter.ToUInt32(source.GetAddressBytes(), 0), mac, ref length);
             if (result != 0 || length < 6)
                 return null;
 
@@ -502,18 +529,18 @@ public sealed class NetworkScanner
         }
     }
 
-    private static string? NormalizeMac(string? mac)
+    public static string? NormalizeMac(string? mac)
     {
         if (string.IsNullOrWhiteSpace(mac))
             return null;
 
         string hex = new(mac.Where(Uri.IsHexDigit).ToArray());
-        if (hex.Length < 12)
+        if (hex.Length != 12)
             return null;
 
         hex = hex[..12].ToUpperInvariant();
 
-        if (hex.All(c => c == '0') || hex.All(c => c == 'F'))
+        if (hex.All(c => c == '0') || (Convert.ToByte(hex[..2], 16) & 1) != 0)
             return null;
 
         return string.Join(":", Enumerable.Range(0, 6).Select(i => hex.Substring(i * 2, 2)));

@@ -1,5 +1,5 @@
 #define MyAppName "NEXVARY NetScan"
-#define MyAppVersion "0.2.6"
+#define MyAppVersion "0.2.7"
 #define MyAppPublisher "NEXVARY"
 #define MyAppExeName "NEXVARY-NetScan.exe"
 
