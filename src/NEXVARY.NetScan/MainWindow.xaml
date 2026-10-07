@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="NEXVARY NetScan"
-        Width="1120" Height="720" MinWidth="850" MinHeight="560"
+        Width="1220" Height="760" MinWidth="920" MinHeight="600"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BgBrush}"
         Foreground="{StaticResource TextBrush}"
@@ -39,6 +39,19 @@
                 <Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#1B3A3B"/></Trigger>
             </Style.Triggers>
         </Style>
+        <Style TargetType="TabItem">
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="18,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                    <Setter Property="Background" Value="#1B3038"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Grid Margin="22">
@@ -73,7 +86,7 @@
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <TextBlock Text="NEXVARY NetScan" FontSize="28" FontWeight="Bold"/>
-                <TextBlock Text="اكتشف الأجهزة المتصلة بالشبكة بدون أوامر" Foreground="{StaticResource MutedBrush}" FontSize="14" Margin="0,5,0,0"/>
+                <TextBlock Text="اكتشف الأجهزة، الشركة المصنعة، ونشاط الشبكة بدون أوامر" Foreground="{StaticResource MutedBrush}" FontSize="14" Margin="0,5,0,0"/>
             </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" FlowDirection="LeftToRight">
@@ -87,7 +100,7 @@
         <UniformGrid Grid.Row="1" Columns="4" Margin="-5,0,-5,16">
             <Border Style="{StaticResource CardBorder}" Margin="5">
                 <StackPanel>
-                    <TextBlock Text="الأجهزة المكتشفة" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                    <TextBlock Text="الأجهزة المتصلة الآن" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
                     <TextBlock x:Name="DeviceCountText" Text="0" FontSize="25" FontWeight="Bold" Margin="0,5,0,0"/>
                 </StackPanel>
             </Border>
@@ -117,33 +130,90 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBox x:Name="SearchBox" Grid.Column="0" Height="42" VerticalContentAlignment="Center"
-                     ToolTip="ابحث باسم الجهاز أو IP أو MAC" TextChanged="SearchBox_TextChanged"/>
+                     ToolTip="ابحث باسم الجهاز أو الشركة أو IP أو MAC" TextChanged="SearchBox_TextChanged"/>
             <TextBlock Grid.Column="1" Text="بحث" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" Margin="12,0,0,0"/>
         </Grid>
 
         <Border Grid.Row="3" Style="{StaticResource CardBorder}" Padding="0" ClipToBounds="True">
-            <DataGrid x:Name="DevicesGrid"
-                      ItemsSource="{Binding DevicesView}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      CanUserAddRows="False"
-                      CanUserDeleteRows="False"
-                      CanUserResizeRows="False"
-                      HeadersVisibility="Column"
-                      GridLinesVisibility="Horizontal"
-                      BorderThickness="0"
-                      Background="{StaticResource PanelBrush}"
-                      RowHeaderWidth="0"
-                      SelectionMode="Extended"
-                      AlternatingRowBackground="#101A22">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="الحالة" Binding="{Binding Status}" Width="90"/>
-                    <DataGridTextColumn Header="نوع الجهاز" Binding="{Binding DeviceType}" Width="150"/>
-                    <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="*"/>
-                    <DataGridTextColumn Header="MAC Address" Binding="{Binding MacAddress}" Width="190"/>
-                    <DataGridTextColumn Header="IP Address" Binding="{Binding Ip}" Width="150"/>
-                </DataGrid.Columns>
-            </DataGrid>
+            <TabControl Background="Transparent" BorderThickness="0">
+                <TabItem Header="الأجهزة الآن">
+                    <DataGrid x:Name="DevicesGrid"
+                              ItemsSource="{Binding DevicesView}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              CanUserResizeRows="False"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              BorderThickness="0"
+                              Background="{StaticResource PanelBrush}"
+                              RowHeaderWidth="0"
+                              SelectionMode="Extended"
+                              AlternatingRowBackground="#101A22">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="" Width="58">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Width="36" Height="36" CornerRadius="10" Background="{Binding IconBackground}" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding IconGlyph}" FontFamily="Segoe UI Emoji" FontSize="19" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="الحالة" Binding="{Binding Status}" Width="80"/>
+                            <DataGridTextColumn Header="نوع الجهاز" Binding="{Binding DeviceType}" Width="155"/>
+                            <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="125"/>
+                            <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="*"/>
+                            <DataGridTextColumn Header="MAC Address" Binding="{Binding MacAddress}" Width="175"/>
+                            <DataGridTextColumn Header="IP Address" Binding="{Binding Ip}" Width="140"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+
+                <TabItem Header="سجل الأجهزة">
+                    <Grid Background="{StaticResource PanelBrush}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0" Margin="14,10,14,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="الأجهزة التي ظهرت على هذه الشبكة" FontWeight="SemiBold" FontSize="14"/>
+                                <TextBlock Text="يحفظ أول ظهور وآخر ظهور محليًا على هذا الكمبيوتر فقط." Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="0,3,0,0"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="مسح السجل" Click="ClearHistoryButton_Click" Background="#392228" BorderBrush="#66323C" Padding="14,8"/>
+                        </Grid>
+                        <DataGrid Grid.Row="1"
+                                  ItemsSource="{Binding HistoryView}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="Horizontal"
+                                  BorderThickness="0"
+                                  Background="{StaticResource PanelBrush}"
+                                  RowHeaderWidth="0"
+                                  AlternatingRowBackground="#101A22">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="الحالة" Binding="{Binding Status}" Width="110"/>
+                                <DataGridTextColumn Header="النوع" Binding="{Binding DeviceType}" Width="150"/>
+                                <DataGridTextColumn Header="الشركة" Binding="{Binding Vendor}" Width="120"/>
+                                <DataGridTextColumn Header="اسم الجهاز" Binding="{Binding HostName}" Width="*"/>
+                                <DataGridTextColumn Header="MAC" Binding="{Binding MacAddress}" Width="170"/>
+                                <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="135"/>
+                                <DataGridTextColumn Header="أول ظهور" Binding="{Binding FirstSeen}" Width="145"/>
+                                <DataGridTextColumn Header="آخر ظهور" Binding="{Binding LastSeen}" Width="145"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+            </TabControl>
         </Border>
 
         <Grid Grid.Row="4" Margin="0,12,0,0">
@@ -155,7 +225,7 @@
                 <TextBlock x:Name="StatusText" Text="جاهز للفحص" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
                 <ProgressBar x:Name="ScanProgress" Height="5" Margin="0,7,0,0" Minimum="0" Maximum="100" Value="0" Background="#1C2933" Foreground="{StaticResource AccentBrush}"/>
             </StackPanel>
-            <TextBlock Grid.Column="1" Text="يعمل داخل شبكتك المحلية فقط" Foreground="#718492" FontSize="12" VerticalAlignment="Center" Margin="16,0,0,0"/>
+            <TextBlock Grid.Column="1" Text="بيانات MAC والسجل تبقى محليًا على جهازك" Foreground="#718492" FontSize="12" VerticalAlignment="Center" Margin="16,0,0,0"/>
         </Grid>
     </Grid>
 </Window>
