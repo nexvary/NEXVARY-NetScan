@@ -10,6 +10,8 @@ public sealed class VendorResolverTests
     [InlineData("50:3E:AA:11:22:33", "TP-Link")]
     [InlineData("64:1B:2F:11:22:33", "Samsung")]
     [InlineData("74:C9:29:11:22:33", "Dahua")]
+    [InlineData("58:7A:6A:11:22:33", "OPPO")]
+    [InlineData("98:DF:82:11:22:33", "Hikvision")]
     public void Resolve_ReturnsKnownVendor(string mac, string expected)
     {
         Assert.Equal(expected, VendorResolver.Resolve(mac));
