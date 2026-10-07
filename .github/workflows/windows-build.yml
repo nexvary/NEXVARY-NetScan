@@ -1,0 +1,39 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [ main, dev/foundation ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore src/NEXVARY.NetScan/NEXVARY.NetScan.csproj
+
+      - name: Build
+        run: dotnet build src/NEXVARY.NetScan/NEXVARY.NetScan.csproj -c Release --no-restore
+
+      - name: Test
+        run: dotnet test tests/NEXVARY.NetScan.Tests/NEXVARY.NetScan.Tests.csproj -c Release
+
+      - name: Publish portable EXE
+        run: dotnet publish src/NEXVARY.NetScan/NEXVARY.NetScan.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/NEXVARY-NetScan
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEXVARY-NetScan-win-x64
+          path: artifacts/NEXVARY-NetScan/
+          if-no-files-found: error
