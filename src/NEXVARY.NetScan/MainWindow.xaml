@@ -70,18 +70,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" Width="64" Height="64" CornerRadius="18" Background="#142630" BorderBrush="#2E5560" BorderThickness="1" Margin="0,0,14,0">
-                <Canvas Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Ellipse Canvas.Left="18" Canvas.Top="18" Width="12" Height="12" Fill="#F0BD5B"/>
-                    <Line X1="24" Y1="23" X2="8" Y2="10" Stroke="#38D8C8" StrokeThickness="3"/>
-                    <Line X1="24" Y1="24" X2="40" Y2="10" Stroke="#38D8C8" StrokeThickness="3"/>
-                    <Line X1="24" Y1="26" X2="9" Y2="39" Stroke="#38D8C8" StrokeThickness="3"/>
-                    <Line X1="24" Y1="26" X2="40" Y2="39" Stroke="#38D8C8" StrokeThickness="3"/>
-                    <Ellipse Canvas.Left="3" Canvas.Top="5" Width="10" Height="10" Fill="#5FD9CF"/>
-                    <Ellipse Canvas.Left="35" Canvas.Top="5" Width="10" Height="10" Fill="#6EA8FF"/>
-                    <Ellipse Canvas.Left="4" Canvas.Top="34" Width="10" Height="10" Fill="#55D98B"/>
-                    <Ellipse Canvas.Left="35" Canvas.Top="34" Width="10" Height="10" Fill="#D98BFF"/>
-                </Canvas>
+            <Border Grid.Column="0" Width="64" Height="64" CornerRadius="18" Background="#101E2A" BorderBrush="#31546B" BorderThickness="1" Margin="0,0,14,0">
+                <ContentControl ContentTemplate="{StaticResource AppLogoTemplate}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -90,37 +80,73 @@
             </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" FlowDirection="LeftToRight">
-                <Button x:Name="ExportButton" Content="تصدير CSV" Click="ExportButton_Click" IsEnabled="False"/>
-                <Button x:Name="CopyButton" Content="نسخ النتائج" Click="CopyButton_Click" IsEnabled="False"/>
-                <Button x:Name="StopButton" Content="إيقاف" Click="StopButton_Click" IsEnabled="False" Background="#392228" BorderBrush="#66323C"/>
-                <Button x:Name="ScanButton" Content="اكتشاف الأجهزة" Click="ScanButton_Click" Background="#126B67" BorderBrush="#2AA79F" FontWeight="Bold" Padding="22,10"/>
+                <Button x:Name="ExportButton" Click="ExportButton_Click" IsEnabled="False">
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                        <TextBlock Text="تصدير CSV" VerticalAlignment="Center"/>
+                        <ContentControl ContentTemplate="{StaticResource CsvIconTemplate}" Margin="8,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="CopyButton" Click="CopyButton_Click" IsEnabled="False">
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                        <TextBlock Text="نسخ النتائج" VerticalAlignment="Center"/>
+                        <ContentControl ContentTemplate="{StaticResource CopyIconTemplate}" Margin="8,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="StopButton" Click="StopButton_Click" IsEnabled="False" Background="#392228" BorderBrush="#66323C">
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                        <TextBlock Text="إيقاف" VerticalAlignment="Center"/>
+                        <ContentControl ContentTemplate="{StaticResource StopIconTemplate}" Margin="8,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="ScanButton" Click="ScanButton_Click" Background="#126B67" BorderBrush="#2AA79F" FontWeight="Bold" Padding="22,10">
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                        <TextBlock Text="اكتشاف الأجهزة" VerticalAlignment="Center"/>
+                        <ContentControl ContentTemplate="{StaticResource ScanIconTemplate}" Margin="8,0,0,0"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
 
         <UniformGrid Grid.Row="1" Columns="4" Margin="-5,0,-5,16">
             <Border Style="{StaticResource CardBorder}" Margin="5">
-                <StackPanel>
-                    <TextBlock Text="الأجهزة المتصلة الآن" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                    <TextBlock x:Name="DeviceCountText" Text="0" FontSize="25" FontWeight="Bold" Margin="0,5,0,0"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="الأجهزة المتصلة الآن" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                        <TextBlock x:Name="DeviceCountText" Text="0" FontSize="25" FontWeight="Bold" Margin="0,5,0,0"/>
+                    </StackPanel>
+                    <ContentControl Grid.Column="1" ContentTemplate="{StaticResource ConnectedDevicesIconTemplate}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                </Grid>
             </Border>
             <Border Style="{StaticResource CardBorder}" Margin="5">
-                <StackPanel>
-                    <TextBlock Text="الشبكة" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                    <TextBlock x:Name="NetworkText" Text="—" FontSize="19" FontWeight="SemiBold" Margin="0,7,0,0" FlowDirection="LeftToRight"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="الشبكة" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                        <TextBlock x:Name="NetworkText" Text="—" FontSize="19" FontWeight="SemiBold" Margin="0,7,0,0" FlowDirection="LeftToRight"/>
+                    </StackPanel>
+                    <ContentControl Grid.Column="1" ContentTemplate="{StaticResource SubnetIconTemplate}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                </Grid>
             </Border>
             <Border Style="{StaticResource CardBorder}" Margin="5">
-                <StackPanel>
-                    <TextBlock Text="الراوتر / البوابة" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                    <TextBlock x:Name="GatewayText" Text="—" FontSize="19" FontWeight="SemiBold" Margin="0,7,0,0" FlowDirection="LeftToRight"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="الراوتر / البوابة" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                        <TextBlock x:Name="GatewayText" Text="—" FontSize="19" FontWeight="SemiBold" Margin="0,7,0,0" FlowDirection="LeftToRight"/>
+                    </StackPanel>
+                    <ContentControl Grid.Column="1" ContentTemplate="{StaticResource RouterIconTemplate}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                </Grid>
             </Border>
             <Border Style="{StaticResource CardBorder}" Margin="5">
-                <StackPanel>
-                    <TextBlock Text="عنوان هذا الكمبيوتر" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                    <TextBlock x:Name="LocalIpText" Text="—" FontSize="19" FontWeight="SemiBold" Margin="0,7,0,0" FlowDirection="LeftToRight"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="عنوان هذا الكمبيوتر" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                        <TextBlock x:Name="LocalIpText" Text="—" FontSize="19" FontWeight="SemiBold" Margin="0,7,0,0" FlowDirection="LeftToRight"/>
+                    </StackPanel>
+                    <ContentControl Grid.Column="1" ContentTemplate="{StaticResource ComputerIconTemplate}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                </Grid>
             </Border>
         </UniformGrid>
 
@@ -155,9 +181,7 @@
                             <DataGridTemplateColumn Header="" Width="58">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Border Width="36" Height="36" CornerRadius="10" Background="{Binding IconBackground}" HorizontalAlignment="Center">
-                                            <TextBlock Text="{Binding IconGlyph}" FontFamily="Segoe UI Emoji" FontSize="19" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
+                                        <ContentControl Style="{StaticResource DeviceIconHostStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -186,7 +210,12 @@
                                 <TextBlock Text="الأجهزة التي ظهرت على هذه الشبكة" FontWeight="SemiBold" FontSize="14"/>
                                 <TextBlock Text="يحفظ أول ظهور وآخر ظهور محليًا على هذا الكمبيوتر فقط." Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="0,3,0,0"/>
                             </StackPanel>
-                            <Button Grid.Column="1" Content="مسح السجل" Click="ClearHistoryButton_Click" Background="#392228" BorderBrush="#66323C" Padding="14,8"/>
+                            <Button Grid.Column="1" Click="ClearHistoryButton_Click" Background="#392228" BorderBrush="#66323C" Padding="14,8">
+                                <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                                    <TextBlock Text="مسح السجل" VerticalAlignment="Center"/>
+                                    <ContentControl ContentTemplate="{StaticResource TrashIconTemplate}" Margin="8,0,0,0"/>
+                                </StackPanel>
+                            </Button>
                         </Grid>
                         <DataGrid Grid.Row="1"
                                   ItemsSource="{Binding HistoryView}"
