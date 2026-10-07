@@ -6,8 +6,7 @@
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BgBrush}"
         Foreground="{StaticResource TextBrush}"
-        FlowDirection="RightToLeft"
-        Icon="Assets/AppIcon.ico">
+        FlowDirection="RightToLeft">
     <Window.Resources>
         <Style x:Key="CardBorder" TargetType="Border">
             <Setter Property="Background" Value="{StaticResource PanelBrush}"/>
