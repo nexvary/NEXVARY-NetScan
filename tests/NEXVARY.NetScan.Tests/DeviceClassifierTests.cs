@@ -10,7 +10,7 @@ public sealed class DeviceClassifierTests
     {
         var result = DeviceClassifier.Classify("anything", "anything", true, false);
         Assert.Equal("راوتر / بوابة", result.DeviceType);
-        Assert.Equal("🌐", result.IconGlyph);
+        Assert.Equal("Router", result.IconKind);
     }
 
     [Fact]
