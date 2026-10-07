@@ -64,6 +64,7 @@ public sealed class DeviceHistoryStore
             entry.HostName = device.HostName;
             entry.Vendor = device.Vendor;
             entry.DeviceType = device.DeviceType;
+            entry.IconKind = device.IconKind;
             entry.LastSeenUtc = now;
             entry.IsOnline = true;
         }
