@@ -20,6 +20,7 @@ public partial class MainWindow : Window
 
     public ICollectionView DevicesView { get; }
     public ICollectionView HistoryView { get; }
+    public bool AutoScanOnLoad { get; set; } = true;
 
     public MainWindow()
     {
@@ -34,7 +35,20 @@ public partial class MainWindow : Window
         DataContext = this;
     }
 
+    private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (!AutoScanOnLoad || _scanCancellation is not null)
+            return;
+
+        await RunScanAsync();
+    }
+
     private async void ScanButton_Click(object sender, RoutedEventArgs e)
+    {
+        await RunScanAsync();
+    }
+
+    private async Task RunScanAsync()
     {
         if (_scanCancellation is not null)
             return;
@@ -51,24 +65,28 @@ public partial class MainWindow : Window
             LocalIpText.Text = context.LocalAddress.ToString();
             GatewayText.Text = context.Gateway?.ToString() ?? "غير معروف";
             NetworkText.Text = context.NetworkLabel;
-            StatusText.Text = $"جاري فحص الشبكة عبر {context.AdapterName}…";
+            StatusText.Text = $"جاري فحص {context.NetworkLabel} عبر {context.AdapterName}…";
 
             var progress = new Progress<(int Done, int Total)>(p =>
             {
                 ScanProgress.Value = p.Total == 0 ? 0 : p.Done * 100d / p.Total;
-                StatusText.Text = $"جاري الفحص… {p.Done} من {p.Total}";
+                StatusText.Text = $"جاري اكتشاف الأجهزة… {p.Done} من {p.Total}";
             });
 
             var found = await _scanner.ScanAsync(context, progress, _scanCancellation.Token);
             foreach (var device in found)
                 _devices.Add(device);
 
+            DevicesView.Refresh();
             RefreshHistory(_historyStore.Merge(found, DateTimeOffset.UtcNow));
 
             DeviceCountText.Text = _devices.Count.ToString();
-            StatusText.Text = _devices.Count == 0
-                ? "انتهى الفحص ولم يتم العثور على أجهزة أخرى."
-                : $"تم العثور على {_devices.Count} جهاز متصل.";
+            StatusText.Text = _devices.Count switch
+            {
+                0 => $"اكتمل الفحص على {context.AdapterName} ولكن لم تظهر أجهزة. تحقق من اتصال الشبكة.",
+                1 => $"تم العثور على جهاز واحد عبر {context.AdapterName}.",
+                _ => $"تم العثور على {_devices.Count} أجهزة عبر {context.AdapterName}."
+            };
             ScanProgress.Value = 100;
         }
         catch (OperationCanceledException)
@@ -77,8 +95,13 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            StatusText.Text = "تعذر تنفيذ الفحص.";
-            MessageBox.Show(ex.Message, "NEXVARY NetScan", MessageBoxButton.OK, MessageBoxImage.Warning);
+            StatusText.Text = "تعذر تنفيذ فحص الشبكة.";
+            MessageBox.Show(
+                ex.Message + Environment.NewLine + Environment.NewLine +
+                "تأكد أن الكمبيوتر متصل بالراوتر ثم اضغط «اكتشاف الأجهزة».",
+                "NEXVARY NetScan",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
         }
         finally
         {
