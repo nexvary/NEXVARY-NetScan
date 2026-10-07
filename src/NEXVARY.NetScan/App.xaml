@@ -3,6 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Icons.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
         <SolidColorBrush x:Key="BgBrush" Color="#0B1117"/>
         <SolidColorBrush x:Key="PanelBrush" Color="#111B24"/>
         <SolidColorBrush x:Key="Panel2Brush" Color="#17232E"/>
@@ -46,5 +50,6 @@
             <Setter Property="Padding" Value="12,9"/>
             <Setter Property="FontSize" Value="15"/>
         </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
