@@ -7,6 +7,7 @@ public sealed class DeviceHistoryEntry
     public string Key { get; set; } = string.Empty;
     public string Ip { get; set; } = string.Empty;
     public string MacAddress { get; set; } = string.Empty;
+    public string DnsServer { get; set; } = string.Empty;
     public string HostName { get; set; } = string.Empty;
     public string Vendor { get; set; } = string.Empty;
     public string DeviceType { get; set; } = string.Empty;
