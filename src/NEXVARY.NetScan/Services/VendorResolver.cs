@@ -66,9 +66,37 @@ public static class VendorResolver
             ["3007EB"] = "Xiaomi",
             ["1CCCD6"] = "Xiaomi",
 
+            // OPPO
+            ["00CAE0"] = "OPPO",
+            ["042405"] = "OPPO",
+            ["04DBD9"] = "OPPO",
+            ["084ACF"] = "OPPO",
+            ["08DD03"] = "OPPO",
+            ["0C938F"] = "OPPO",
+            ["0CBD75"] = "OPPO",
+            ["1016B1"] = "OPPO",
+            ["1071FA"] = "OPPO",
+            ["587A6A"] = "OPPO",
+
             // Surveillance
             ["74C929"] = "Dahua",
-            ["30DDAA"] = "Dahua"
+            ["30DDAA"] = "Dahua",
+            ["00BC99"] = "Hikvision",
+            ["040312"] = "Hikvision",
+            ["04EECD"] = "Hikvision",
+            ["083BC1"] = "Hikvision",
+            ["085411"] = "Hikvision",
+            ["08A189"] = "Hikvision",
+            ["08CC81"] = "Hikvision",
+            ["0C75D2"] = "Hikvision",
+            ["1012FB"] = "Hikvision",
+            ["1868CB"] = "Hikvision",
+            ["188025"] = "Hikvision",
+            ["240F9B"] = "Hikvision",
+            ["2428FD"] = "Hikvision",
+            ["2CA59C"] = "Hikvision",
+            ["98DF82"] = "Hikvision",
+            ["98F112"] = "Hikvision"
         };
 
     public static string Resolve(string? macAddress)
