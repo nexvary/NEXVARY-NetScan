@@ -128,8 +128,7 @@ public sealed class NetworkScanner
             MacAddress = macAddress,
             Vendor = vendor,
             DeviceType = presentation.DeviceType,
-            IconGlyph = presentation.IconGlyph,
-            IconBackground = presentation.IconBackground,
+            IconKind = presentation.IconKind,
             Status = "متصل",
             IsGateway = isGateway,
             IsLocalComputer = isLocal
