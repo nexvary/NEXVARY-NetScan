@@ -49,6 +49,11 @@ public sealed class DeviceHistoryStore
         foreach (var device in discovered.Where(d => d.Status == "متصل"))
         {
             string key = BuildKey(device);
+            if (!entries.ContainsKey(key) && key.StartsWith("mac:", StringComparison.Ordinal) && entries.Remove("ip:" + device.Ip, out var unresolved))
+            {
+                unresolved.Key = key;
+                entries[key] = unresolved;
+            }
             if (!entries.TryGetValue(key, out var entry))
             {
                 entry = new DeviceHistoryEntry

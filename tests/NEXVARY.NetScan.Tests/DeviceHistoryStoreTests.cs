@@ -39,6 +39,24 @@ public sealed class DeviceHistoryStoreTests
         }
     }
 
+    [Fact]
+    public void MacResolutionPreservesFirstSeen_AndClearRemovesFile()
+    {
+        string path = Path.Combine(Path.GetTempPath(), $"netscan-{Guid.NewGuid():N}.json");
+        try
+        {
+            var store = new DeviceHistoryStore(path);
+            var first = DateTimeOffset.UtcNow;
+            store.Merge(new[] { Device("192.168.1.20", "غير متاح", "غير معروف") }, first);
+            var records = store.Merge(new[] { Device("192.168.1.20", "4C:5E:0C:11:22:33", "MikroTik") }, first.AddMinutes(1));
+            Assert.Equal(first, Assert.Single(records).FirstSeenUtc);
+            store.Clear();
+            Assert.False(File.Exists(path));
+            Assert.Empty(store.Load());
+        }
+        finally { if (File.Exists(path)) File.Delete(path); }
+    }
+
     private static DeviceInfo Device(string ip, string mac, string vendor) => new()
     {
         IpAddress = IPAddress.Parse(ip),

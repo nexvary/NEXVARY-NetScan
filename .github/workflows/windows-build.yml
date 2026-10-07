@@ -71,6 +71,9 @@ jobs:
           $p = Start-Process -FilePath $installer -ArgumentList $installArgs -PassThru -Wait
           if ($p.ExitCode -ne 0) { throw "Installer returned exit code $($p.ExitCode)." }
 
+          # A second silent install verifies in-place repair/update handling.
+          $p = Start-Process -FilePath $installer -ArgumentList $installArgs -PassThru -Wait
+          if ($p.ExitCode -ne 0) { throw "In-place install failed." }
           $installedExe = Join-Path $testDir "NEXVARY-NetScan.exe"
           if (-not (Test-Path $installedExe)) { throw "Installed executable was not found." }
 

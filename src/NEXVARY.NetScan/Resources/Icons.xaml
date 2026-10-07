@@ -2,30 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- App / toolbar -->
-    <DataTemplate x:Key="AppLogoTemplate">
-        <Viewbox Width="48" Height="48">
-            <Canvas Width="48" Height="48">
-                <Rectangle Width="48" Height="48" RadiusX="12" RadiusY="12">
-                    <Rectangle.Fill>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#063B66" Offset="0"/>
-                            <GradientStop Color="#114E91" Offset=".5"/>
-                            <GradientStop Color="#44257D" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Rectangle.Fill>
-                </Rectangle>
-                <Line X1="14" Y1="14" X2="24" Y2="24" Stroke="#62E6FF" StrokeThickness="2.6"/>
-                <Line X1="34" Y1="12" X2="24" Y2="24" Stroke="#7DF07A" StrokeThickness="2.6"/>
-                <Line X1="13" Y1="35" X2="24" Y2="24" Stroke="#FFD45C" StrokeThickness="2.6"/>
-                <Line X1="36" Y1="35" X2="24" Y2="24" Stroke="#D07BFF" StrokeThickness="2.6"/>
-                <Ellipse Canvas.Left="8" Canvas.Top="8" Width="12" Height="12" Fill="#27C7FF" Stroke="#A8F0FF" StrokeThickness="1"/>
-                <Ellipse Canvas.Left="29" Canvas.Top="7" Width="12" Height="12" Fill="#73E95D" Stroke="#D6FFD1" StrokeThickness="1"/>
-                <Ellipse Canvas.Left="7" Canvas.Top="29" Width="12" Height="12" Fill="#FFBA43" Stroke="#FFF0B5" StrokeThickness="1"/>
-                <Ellipse Canvas.Left="30" Canvas.Top="29" Width="12" Height="12" Fill="#B65CFF" Stroke="#EDC9FF" StrokeThickness="1"/>
-                <Ellipse Canvas.Left="18" Canvas.Top="18" Width="12" Height="12" Fill="#F4FBFF" Stroke="#66D7FF" StrokeThickness="1.2"/>
-            </Canvas>
-        </Viewbox>
-    </DataTemplate>
+    <DataTemplate x:Key="AppLogoTemplate"><Image Width="48" Height="48" Source="/Assets/AppIcon.ico" FlowDirection="LeftToRight"/></DataTemplate>
 
     <DataTemplate x:Key="ScanIconTemplate">
         <Viewbox Width="32" Height="32" FlowDirection="LeftToRight">

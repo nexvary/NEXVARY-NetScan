@@ -20,6 +20,9 @@ UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+AppComments=IPv4 discovery, offline IEEE vendor lookup, network details, history and CSV export.
+AppPublisherURL=https://nexvary.com
+UninstallDisplayName=NEXVARY NetScan
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 CloseApplications=yes
@@ -48,5 +51,3 @@ Name: "{autodesktop}\NEXVARY NetScan"; Filename: "{app}\{#MyAppExeName}"; Workin
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch NEXVARY NetScan"; Flags: nowait postinstall skipifsilent
 
-[UninstallDelete]
-Type: filesandordirs; Name: "{app}"

@@ -126,6 +126,7 @@ public static class VendorResolver
         string oui = normalized[..6];
         if (!Registry.TryGetValue(oui, out var registered)) return "غير معروف";
         if (Vendors.TryGetValue(oui, out var alias) && registered.Contains(alias.Replace("-", ""), StringComparison.OrdinalIgnoreCase)) return alias;
+        if (registered.Equals("Routerboard.com", StringComparison.OrdinalIgnoreCase)) return "MikroTik";
         string compact = registered.Replace("-", "").Replace(" ", "");
         foreach (var brand in new[] { "MikroTik", "TP-Link", "Huawei", "ZTE", "Cisco", "Ubiquiti", "Tenda", "D-Link", "Mercusys", "Xiaomi", "OPPO", "realme", "Samsung", "Apple", "Honor", "Hikvision", "Dahua", "Uniview", "Imou", "Ezviz", "Tuya", "Intel", "Dell", "Lenovo", "ASUS", "Acer", "Epson", "Canon", "Brother" })
             if (compact.Contains(brand.Replace("-", ""), StringComparison.OrdinalIgnoreCase)) return brand;
