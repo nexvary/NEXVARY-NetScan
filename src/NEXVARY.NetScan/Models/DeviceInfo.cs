@@ -10,8 +10,7 @@ public sealed class DeviceInfo
     public string MacAddress { get; init; } = "غير متاح";
     public string Vendor { get; init; } = "غير معروف";
     public string DeviceType { get; init; } = "جهاز شبكة";
-    public string IconGlyph { get; init; } = "◆";
-    public string IconBackground { get; init; } = "#273641";
+    public string IconKind { get; init; } = "Generic";
     public string Status { get; init; } = "متصل";
     public bool IsGateway { get; init; }
     public bool IsLocalComputer { get; init; }
