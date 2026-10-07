@@ -1,6 +1,6 @@
 namespace NEXVARY.NetScan.Services;
 
-public sealed record DevicePresentation(string DeviceType, string IconGlyph, string IconBackground);
+public sealed record DevicePresentation(string DeviceType, string IconKind);
 
 public static class DeviceClassifier
 {
@@ -9,30 +9,30 @@ public static class DeviceClassifier
         string text = $"{hostName} {vendor}".ToLowerInvariant();
 
         if (isGateway)
-            return new("راوتر / بوابة", "🌐", "#173A46");
+            return new("راوتر / بوابة", "Router");
 
         if (isLocalComputer)
-            return new("هذا الكمبيوتر", "💻", "#263B58");
+            return new("هذا الكمبيوتر", "Computer");
 
         if (ContainsAny(text, "hikvision", "dahua", "camera", "cam-", "ipc", "nvr", "dvr"))
-            return new("كاميرا / مراقبة", "📷", "#3D2E52");
+            return new("كاميرا / مراقبة", "Camera");
 
         if (ContainsAny(text, "printer", "epson", "canon", "brother", "laserjet", "deskjet"))
-            return new("طابعة", "🖨️", "#4A3B22");
+            return new("طابعة", "Printer");
 
         if (ContainsAny(text, "iphone", "ipad", "android", "oppo", "realme", "xiaomi", "redmi", "samsung", "galaxy", "phone"))
-            return new("هاتف / جهاز محمول", "📱", "#1F4550");
+            return new("هاتف / جهاز محمول", "Phone");
 
         if (ContainsAny(text, "tv", "chromecast", "roku", "bravia", "webos", "tizen"))
-            return new("تلفاز / وسائط", "📺", "#3F3655");
+            return new("تلفاز / وسائط", "Tv");
 
         if (ContainsAny(text, "tuya", "smart", "esp32", "esp8266", "tasmota", "shelly", "iot"))
-            return new("منزل ذكي / IoT", "💡", "#4B4321");
+            return new("منزل ذكي / IoT", "IoT");
 
         if (ContainsAny(text, "mikrotik", "tp-link", "huawei", "ubiquiti", "router", "switch", "access point", "ap-"))
-            return new("معدات شبكة", "📡", "#23423D");
+            return new("معدات شبكة", "Network");
 
-        return new("جهاز شبكة", "◆", "#273641");
+        return new("جهاز شبكة", "Generic");
     }
 
     private static bool ContainsAny(string text, params string[] tokens) =>
