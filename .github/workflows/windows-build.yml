@@ -55,7 +55,7 @@ jobs:
       - name: Smoke-test installer and uninstaller
         shell: pwsh
         run: |
-          $installer = Join-Path $PWD "artifacts/installer/NEXVARY-NetScan-Setup-v0.2.5.exe"
+          $installer = Join-Path $PWD "artifacts/installer/NEXVARY-NetScan-Setup-v0.2.6.exe"
           if (-not (Test-Path $installer)) { throw "Installer was not created." }
 
           $testDir = Join-Path $env:TEMP "NEXVARY-NetScan-CI"
@@ -109,6 +109,6 @@ jobs:
       - name: Upload Windows installer
         uses: actions/upload-artifact@v4
         with:
-          name: NEXVARY-NetScan-Setup-v0.2.5
-          path: artifacts/installer/NEXVARY-NetScan-Setup-v0.2.5.exe
+          name: NEXVARY-NetScan-Setup-v0.2.6
+          path: artifacts/installer/NEXVARY-NetScan-Setup-v0.2.6.exe
           if-no-files-found: error
