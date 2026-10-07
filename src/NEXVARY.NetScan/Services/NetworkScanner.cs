@@ -117,12 +117,19 @@ public sealed class NetworkScanner
             return null;
 
         string hostName = await TryResolveHostNameAsync(ip, token).ConfigureAwait(false);
+        string macAddress = mac ?? "غير متاح";
+        string vendor = VendorResolver.Resolve(macAddress);
+        var presentation = DeviceClassifier.Classify(hostName, vendor, isGateway, isLocal);
+
         return new DeviceInfo
         {
             IpAddress = ip,
             HostName = hostName,
-            MacAddress = mac ?? "غير متاح",
-            DeviceType = isGateway ? "الراوتر / البوابة" : isLocal ? "هذا الكمبيوتر" : "جهاز شبكة",
+            MacAddress = macAddress,
+            Vendor = vendor,
+            DeviceType = presentation.DeviceType,
+            IconGlyph = presentation.IconGlyph,
+            IconBackground = presentation.IconBackground,
             Status = "متصل",
             IsGateway = isGateway,
             IsLocalComputer = isLocal
