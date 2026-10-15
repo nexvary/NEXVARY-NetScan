@@ -44,7 +44,7 @@ public sealed class FindingStore(string filePath)
     {
         if (document.SchemaVersion != 1) throw new InvalidDataException("إصدار ملف نتائج الأمان غير مدعوم. لم يتم تغييره.");
         if (document.Findings is null || document.Snapshots is null || document.Findings.Count > 10000 || document.Snapshots.Count > 100 ||
-            document.Findings.Any(f => f is null || string.IsNullOrWhiteSpace(f.TemplateId) || string.IsNullOrWhiteSpace(f.Target)) ||
+            document.Findings.Any(f => f is null || string.IsNullOrWhiteSpace(f.TemplateId) || string.IsNullOrWhiteSpace(f.Target) || f.Title is null) ||
             document.Snapshots.Any(s => s is null || s.Devices is null || s.Devices.Any(d => d is null)))
             throw new InvalidDataException("بنية ملف نتائج الأمان غير صالحة أو تتجاوز السعة.");
     }

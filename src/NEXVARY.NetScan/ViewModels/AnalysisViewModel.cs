@@ -77,7 +77,7 @@ public sealed class AnalysisViewModel : INotifyPropertyChanged
             new[] { row.Title, row.Target, row.Address, row.Rule, row.Severity, row.Correlation, row.Review, string.Join(" ", row.Finding.CveIds ?? []) }
                 .Any(text => text.Contains(Search.Trim(), StringComparison.OrdinalIgnoreCase)));
         try { _document = _store.Load(); Reload(); }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or NotSupportedException)
+        catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException or JsonException or NotSupportedException)
         {
             _readOnly = true;
             Message = "تعذر قراءة النتائج المحفوظة؛ أُوقف الاستيراد لحماية الملف. يمكنك مسح نتائج الأمان صراحةً للبدء مجددًا.";
@@ -117,7 +117,7 @@ public sealed class AnalysisViewModel : INotifyPropertyChanged
             _document = next; Reload();
             Message = $"أُضيفت {additions.Length} نتيجة؛ أسطر غير صالحة: {result.InvalidLines}؛ مكررة: {result.Duplicates + result.Findings.Count - additions.Length}. النتائج تحتاج مراجعة.";
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.DecoderFallbackException)
+        catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException or System.Text.DecoderFallbackException)
         { Message = "لم يُحفظ الاستيراد. " + ex.Message; }
         finally { SetBusy(false); }
     }
@@ -135,7 +135,7 @@ public sealed class AnalysisViewModel : INotifyPropertyChanged
             SelectedFinding = Findings.FirstOrDefault(f => f.Finding.Id == selectedId);
             Message = "حُفظ قرار المراجعة اليدوية محليًا؛ لم يُنفذ أي تغيير على الجهاز.";
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { Message = "تعذر حفظ المراجعة. " + ex.Message; }
+        catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException) { Message = "تعذر حفظ المراجعة. " + ex.Message; }
         finally { SetBusy(false); }
     }
 
@@ -150,7 +150,7 @@ public sealed class AnalysisViewModel : INotifyPropertyChanged
             _document = empty; _readOnly = false; Reload();
             Message = "مُسحت نتائج الأمان ولقطاتها المحفوظة. سجل اكتشاف الأجهزة مستقل.";
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { Message = "تعذر مسح النتائج. " + ex.Message; }
+        catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException) { Message = "تعذر مسح النتائج. " + ex.Message; }
         finally { SetBusy(false); }
     }
 
