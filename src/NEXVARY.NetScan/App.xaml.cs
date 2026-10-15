@@ -27,7 +27,9 @@ public partial class App : Application
         {
             WriteLog("Application startup begin.");
             _verification = e.Args.Length == 2 && e.Args[0] == "--verify-startup";
-            var window = new MainWindow { AutoScanOnLoad = !_verification };
+            var analysis = _verification ? new ViewModels.AnalysisViewModel(new Analysis.FindingStore(
+                Path.Combine(Path.GetTempPath(), "NetScan-verification-" + Guid.NewGuid() + ".json"))) : null;
+            var window = new MainWindow(analysis) { AutoScanOnLoad = !_verification };
             MainWindow = window;
             window.Show();
             WriteLog("Main window shown successfully.");

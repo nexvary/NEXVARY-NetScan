@@ -17,7 +17,8 @@ public sealed record NetworkContext(
     IReadOnlyList<IPAddress> DnsServers,
     string NetworkLabel,
     string ConnectionType = "غير متاح",
-    long LinkSpeed = 0);
+    long LinkSpeed = 0,
+    string AdapterId = "");
 
 public sealed class NetworkScanner
 {
@@ -56,7 +57,8 @@ public sealed class NetworkScanner
             SubnetCalculator.Describe(selected.Unicast.Address, selected.Unicast.IPv4Mask!),
             selected.Interface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ? "Wi-Fi" :
                 AdapterRank(selected.Interface.NetworkInterfaceType) == 0 ? "Ethernet" : selected.Interface.NetworkInterfaceType.ToString(),
-            selected.Interface.Speed);
+            selected.Interface.Speed,
+            selected.Interface.Id);
     }
 
     public async Task<IReadOnlyList<DeviceInfo>> ScanAsync(

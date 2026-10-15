@@ -4,8 +4,13 @@ on:
   push:
     branches: [ main, dev/foundation ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev/foundation ]
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: Publish verified release downloads after all checks pass
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -27,6 +32,9 @@ jobs:
 
       - name: Build
         run: dotnet build src/NEXVARY.NetScan/NEXVARY.NetScan.csproj -c Release --no-restore
+
+      - name: Test analysis without WPF or network access
+        run: dotnet test tests/NEXVARY.NetScan.Analysis.Tests/NEXVARY.NetScan.Analysis.Tests.csproj -c Release --logger "trx;LogFileName=analysis.trx" --results-directory artifacts/tests
 
       - name: Test
         run: dotnet test tests/NEXVARY.NetScan.Tests/NEXVARY.NetScan.Tests.csproj -c Release --logger "trx;LogFileName=tests.trx" --results-directory artifacts/tests
@@ -58,7 +66,7 @@ jobs:
       - name: Smoke-test installer and uninstaller
         shell: pwsh
         run: |
-          $installer = Join-Path $PWD "artifacts/installer/NEXVARY-NetScan-Setup-v0.2.7.exe"
+          $installer = Join-Path $PWD "artifacts/installer/NEXVARY-NetScan-Setup-v0.2.8.exe"
           if (-not (Test-Path $installer)) { throw "Installer was not created." }
 
           $testDir = Join-Path $env:TEMP "NEXVARY-NetScan-CI"
@@ -134,15 +142,15 @@ jobs:
       - name: Upload Windows installer
         uses: actions/upload-artifact@v4
         with:
-          name: NEXVARY-NetScan-Setup-v0.2.7
-          path: artifacts/installer/NEXVARY-NetScan-Setup-v0.2.7.exe
+          name: NEXVARY-NetScan-Setup-v0.2.8
+          path: artifacts/installer/NEXVARY-NetScan-Setup-v0.2.8.exe
           if-no-files-found: error
 
       - name: Publish verified release downloads
-        if: github.event_name == 'push' && github.ref == 'refs/heads/dev/foundation'
+        if: github.event_name == 'workflow_dispatch' && inputs.publish_release && github.ref == 'refs/heads/dev/foundation'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create v0.2.7 artifacts/publish/NEXVARY-NetScan.exe artifacts/installer/NEXVARY-NetScan-Setup-v0.2.7.exe artifacts/SHA256SUMS.txt --target $env:GITHUB_SHA --title "NEXVARY NetScan 0.2.7" --notes-file docs/RELEASE-0.2.7.md
+          gh release create v0.2.8 artifacts/publish/NEXVARY-NetScan.exe artifacts/installer/NEXVARY-NetScan-Setup-v0.2.8.exe artifacts/SHA256SUMS.txt --target $env:GITHUB_SHA --title "NEXVARY NetScan 0.2.8" --notes-file docs/RELEASE-0.2.8.md
           if ($LASTEXITCODE -ne 0) { throw "Release publication failed." }
