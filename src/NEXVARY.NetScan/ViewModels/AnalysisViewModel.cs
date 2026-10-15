@@ -8,7 +8,7 @@ using NEXVARY.NetScan.Analysis;
 
 namespace NEXVARY.NetScan.ViewModels;
 
-public sealed record FindingRow(Finding Finding)
+public sealed record FindingRow(Finding Finding, DiscoverySnapshot? Snapshot = null)
 {
     public string Title => Finding.Title;
     public string Target => Finding.Target;
@@ -37,7 +37,9 @@ public sealed record FindingRow(Finding Finding)
     public string Details => $"المصدر: {Finding.Source}\nالقاعدة: {Finding.TemplateId}\nالمطابق: {Finding.Matcher}\nالبروتوكول: {Finding.Protocol}\n" +
         $"الهدف: {Finding.Target}\nIP المُبلّغ: {Address}\nCVE: {string.Join(", ", Finding.CveIds ?? [])}\n" +
         $"وقت الرصد UTC: {Finding.ObservedAtUtc?.ToString("u") ?? "غير متاح"}\nوقت الاستيراد UTC: {Finding.ImportedAtUtc:u}\n" +
-        $"لقطة الاكتشاف: {Finding.SnapshotId?.ToString() ?? "لا توجد"}\nالربط: {Correlation}\nالمراجعة: {Review}\n" +
+        $"لقطة الاكتشاف: {Finding.SnapshotId?.ToString() ?? "لا توجد"}\n" +
+        (Snapshot is null ? "" : $"واجهة اللقطة: {Snapshot.AdapterName}\nالشبكة: {Snapshot.LocalIp} / {Snapshot.SubnetMask}\nبوابة اللقطة: {Snapshot.GatewayIp ?? "غير متاح"}\nوقت اللقطة UTC: {Snapshot.CapturedAtUtc:u}\n") +
+        $"الربط: {Correlation}\nالمراجعة: {Review}\n" +
         "الربط مبني على عنوان IP المبلّغ ولقطة محددة، ولا يثبت هوية الجهاز أو وجود الثغرة. حُذفت مسارات URL وبيانات الطلب والاستجابة من الاستيراد.";
 }
 
@@ -157,7 +159,7 @@ public sealed class AnalysisViewModel : INotifyPropertyChanged
     private void Reload()
     {
         SelectedFinding = null; Findings.Clear();
-        foreach (var finding in _document.Findings.OrderByDescending(f => f.Severity).ThenByDescending(f => f.ImportedAtUtc)) Findings.Add(new(finding));
+        foreach (var finding in _document.Findings.OrderByDescending(f => f.Severity).ThenByDescending(f => f.ImportedAtUtc)) Findings.Add(new(finding, _document.Snapshots.FirstOrDefault(s => s.Id == finding.SnapshotId)));
         Changed(nameof(Summary));
     }
     private void SetBusy(bool busy)
