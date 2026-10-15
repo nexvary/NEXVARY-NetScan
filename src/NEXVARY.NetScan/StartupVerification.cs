@@ -5,6 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Text.Json;
+using NEXVARY.NetScan.Analysis;
 using NEXVARY.NetScan.Models;
 
 namespace NEXVARY.NetScan;
@@ -51,6 +53,36 @@ internal static class StartupVerification
             throw new InvalidOperationException("Selected tab is not dark.");
         if (historyGrid.ItemContainerGenerator.ContainerFromIndex(0) is not DataGridRow) throw new InvalidOperationException("History rows did not render.");
         Capture(window, Path.Combine(directory, "history.png"));
+        // Import a real JSONL fixture through the production pipeline; never launch a scanner.
+        var fixture = Path.Combine(directory, "security-fixture.jsonl");
+        var captured = DateTimeOffset.UtcNow;
+        window.Analysis.SetSnapshot(new DiscoverySnapshot(Guid.NewGuid(), captured, "qa-interface", "UI verification",
+            "192.168.1.20", "255.255.255.0", "192.168.1.1",
+            Array.AsReadOnly(new[] { new DeviceObservation("192.168.1.1", "4C:5E:0C:11:22:33", "router-demo") })));
+        window.Analysis.LinkToCurrentSnapshot = true;
+        await File.WriteAllTextAsync(fixture, JsonSerializer.Serialize(new Dictionary<string, object?> {
+            ["template-id"] = "qa-demonstration-only", ["matched-at"] = "http://192.168.1.1:80/private?token=not-stored",
+            ["timestamp"] = captured, ["type"] = "http", ["matcher-status"] = true,
+            ["info"] = new { name = "بيانات اختبار واجهة — ليست ثغرة حقيقية", severity = "info" }
+        }));
+        await window.Analysis.ImportAsync(fixture);
+        if (window.Analysis.Findings.Count != 1 || window.Analysis.Findings[0].Finding.Correlation != CorrelationState.Candidate)
+            throw new InvalidOperationException("Security fixture import/correlation failed.");
+        var security = (TabItem)window.FindName("SecurityTab");
+        security.IsSelected = true;
+        await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        window.UpdateLayout();
+        var findingsGrid = (DataGrid)window.FindName("FindingsGrid");
+        findingsGrid.SelectedIndex = 0;
+        window.UpdateLayout();
+        if (findingsGrid.ItemContainerGenerator.ContainerFromIndex(0) is not DataGridRow)
+            throw new InvalidOperationException("Security rows did not render.");
+        if (window.Analysis.SelectedFinding is null) throw new InvalidOperationException("Security selection binding failed.");
+        Capture(window, Path.Combine(directory, "security.png"));
+        window.Width = window.MinWidth;
+        window.Height = window.MinHeight;
+        window.UpdateLayout();
+        Capture(window, Path.Combine(directory, "security-compact.png"));
         ((TabItem)window.FindName("DevicesTab")).IsSelected = true;
         window.Width = window.MinWidth;
         window.Height = window.MinHeight;
@@ -59,7 +91,7 @@ internal static class StartupVerification
         await Task.Delay(5000);
         await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         if (!window.IsVisible) throw new InvalidOperationException("MainWindow closed during verification.");
-        await File.WriteAllTextAsync(Path.Combine(directory, "startup-ok.txt"), "MainWindow shown; rows and icons rendered; dark selected tab; dispatcher stable.");
+        await File.WriteAllTextAsync(Path.Combine(directory, "startup-ok.txt"), "MainWindow shown; rows and icons rendered; dark selected tab; security import/correlation/selection; dispatcher stable.");
     }
 
     private static void Capture(Window window, string path)

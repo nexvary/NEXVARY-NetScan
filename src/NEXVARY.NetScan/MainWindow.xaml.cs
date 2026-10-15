@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Data;
 using Microsoft.Win32;
 using NEXVARY.NetScan.Models;
+using NEXVARY.NetScan.Analysis;
+using NEXVARY.NetScan.ViewModels;
 using NEXVARY.NetScan.Services;
 
 namespace NEXVARY.NetScan;
@@ -18,12 +20,16 @@ public partial class MainWindow : Window
     private readonly ObservableCollection<DeviceHistoryEntry> _history = new();
     private CancellationTokenSource? _scanCancellation;
 
+    public AnalysisViewModel Analysis { get; }
     public ICollectionView DevicesView { get; }
     public ICollectionView HistoryView { get; }
     public bool AutoScanOnLoad { get; set; } = true;
 
-    public MainWindow()
+    public MainWindow() : this(null) { }
+
+    public MainWindow(AnalysisViewModel? analysis)
     {
+        Analysis = analysis ?? new AnalysisViewModel();
         // Create views before InitializeComponent because XAML events such as
         // TextChanged can fire while the visual tree is still being built.
         DevicesView = CollectionViewSource.GetDefaultView(_devices);
@@ -65,6 +71,7 @@ public partial class MainWindow : Window
 
         try
         {
+            Analysis.SetSnapshot(null);
             var context = _scanner.GetActiveNetwork();
             LocalIpText.Text = context.LocalAddress.ToString();
             DnsText.Text = NetworkScanner.FormatDnsServers(context.DnsServers);
@@ -87,6 +94,10 @@ public partial class MainWindow : Window
                 _devices.Add(device);
 
             DevicesView.Refresh();
+            Analysis.SetSnapshot(new DiscoverySnapshot(Guid.NewGuid(), DateTimeOffset.UtcNow,
+                context.AdapterId, context.AdapterName, context.LocalAddress.ToString(), context.SubnetMask.ToString(),
+                context.Gateway?.ToString(), Array.AsReadOnly(found.Select(d => new DeviceObservation(d.Ip,
+                    NetworkScanner.NormalizeMac(d.MacAddress), d.HostName)).ToArray())));
             RefreshHistory(_historyStore.Merge(found, DateTimeOffset.UtcNow));
 
             DeviceCountText.Text = _devices.Count.ToString();
@@ -221,6 +232,28 @@ public partial class MainWindow : Window
         catch (IOException) { StatusText.Text = "تعذر مسح السجل: الملف قيد الاستخدام. حاول مرة أخرى."; }
         catch (UnauthorizedAccessException) { StatusText.Text = "تعذر مسح السجل: لا توجد صلاحية للكتابة."; }
     }
+
+    private async void ImportFindingsButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = "استيراد تقرير Nuclei JSONL",
+            Filter = "Nuclei JSONL (*.jsonl;*.json)|*.jsonl;*.json",
+            CheckFileExists = true, Multiselect = false
+        };
+        if (dialog.ShowDialog(this) == true) await Analysis.ImportAsync(dialog.FileName);
+    }
+
+    private async void ClearFindingsButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (MessageBox.Show("هل تريد مسح كل نتائج الأمان ولقطاتها المحفوظة على هذا الكمبيوتر؟", "مسح نتائج الأمان",
+            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) await Analysis.ClearAsync();
+    }
+
+    private async void ConfirmFindingButton_Click(object sender, RoutedEventArgs e) => await Analysis.SetReviewAsync(ReviewState.Confirmed);
+    private async void DismissFindingButton_Click(object sender, RoutedEventArgs e) => await Analysis.SetReviewAsync(ReviewState.FalsePositive);
+    private async void ResolveFindingButton_Click(object sender, RoutedEventArgs e) => await Analysis.SetReviewAsync(ReviewState.Resolved);
+    private async void ResetFindingButton_Click(object sender, RoutedEventArgs e) => await Analysis.SetReviewAsync(ReviewState.NeedsReview);
 
     private static string Csv(string value) => $"\"{((value.Length > 0 && "=+-@\t\r\n".Contains(value[0])) ? "'" + value : value).Replace("\"", "\"\"")}\"";
 

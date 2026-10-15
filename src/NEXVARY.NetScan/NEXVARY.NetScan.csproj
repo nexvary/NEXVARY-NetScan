@@ -8,9 +8,10 @@
     <AssemblyName>NEXVARY-NetScan</AssemblyName>
     <RootNamespace>NEXVARY.NetScan</RootNamespace>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
-    <Version>0.2.7</Version>
+    <Version>0.2.8</Version>
     <Company>NEXVARY</Company>
     <Product>NEXVARY NetScan</Product>
   </PropertyGroup>
   <ItemGroup><EmbeddedResource Include="Assets/vendors.tsv" /><Resource Include="Assets/AppIcon.ico" /><Resource Include="Assets/AppLogo.png" /></ItemGroup>
+  <ItemGroup><ProjectReference Include="../NEXVARY.NetScan.Analysis/NEXVARY.NetScan.Analysis.csproj" /></ItemGroup>
 </Project>
