@@ -78,10 +78,12 @@ internal static class StartupVerification
         if (findingsGrid.ItemContainerGenerator.ContainerFromIndex(0) is not DataGridRow)
             throw new InvalidOperationException("Security rows did not render.");
         if (window.Analysis.SelectedFinding is null) throw new InvalidOperationException("Security selection binding failed.");
+        VerifySecurityLayout(findingsGrid);
         Capture(window, Path.Combine(directory, "security.png"));
         window.Width = window.MinWidth;
         window.Height = window.MinHeight;
         window.UpdateLayout();
+        VerifySecurityLayout(findingsGrid);
         Capture(window, Path.Combine(directory, "security-compact.png"));
         ((TabItem)window.FindName("DevicesTab")).IsSelected = true;
         window.Width = window.MinWidth;
@@ -92,6 +94,15 @@ internal static class StartupVerification
         await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         if (!window.IsVisible) throw new InvalidOperationException("MainWindow closed during verification.");
         await File.WriteAllTextAsync(Path.Combine(directory, "startup-ok.txt"), "MainWindow shown; rows and icons rendered; dark selected tab; security import/correlation/selection; dispatcher stable.");
+    }
+
+    private static void VerifySecurityLayout(DataGrid grid)
+    {
+        if (grid.ActualHeight < 160 || grid.ItemContainerGenerator.ContainerFromIndex(0) is not DataGridRow row)
+            throw new InvalidOperationException("Security workspace is too short to use.");
+        var bounds = row.TransformToAncestor(grid).TransformBounds(new Rect(row.RenderSize));
+        if (bounds.Top < 0 || bounds.Bottom > grid.ActualHeight || bounds.Height < 40)
+            throw new InvalidOperationException("Security result row is clipped.");
     }
 
     private static void Capture(Window window, string path)
